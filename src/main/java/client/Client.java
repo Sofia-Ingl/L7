@@ -85,7 +85,7 @@ public class Client implements Runnable {
 
             setConnectionWithServer();
             setSelector();
-            // AUTHORISATION
+            // AUTHORIZATION
 
             try {
 

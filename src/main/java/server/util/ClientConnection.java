@@ -35,11 +35,24 @@ public class ClientConnection implements Runnable {
                 socket.getInputStream().read(b);
                 clientRequest = (ClientRequest) Serialization.deserialize(b);
                 serverResponse = server.getRequestProcessor().processRequest(clientRequest);
+
                 if (clientRequest.getCommand().equals("exit")) {
                     Server.logger.info(serverResponse.getResponseToPrint());
                     server.getRequestProcessor().getCommandWrapper().getAllInnerCommands().get("save").execute("", null);
                 } else {
-                    socket.getOutputStream().write(Serialization.serialize(serverResponse));
+
+                    ServerResponse finalServerResponse = serverResponse;
+                    Thread responseThread = new Thread(() -> {
+                        try {
+                            socket.getOutputStream().write(Serialization.serialize(finalServerResponse));
+                            Server.logger.info("Ответ успешно отправлен");
+                        } catch (IOException e) {
+                            Server.logger.info("Ошибка соединения при отправке ответа клиенту");
+                        }
+                    });
+                    responseThread.start();
+
+                    //socket.getOutputStream().write(Serialization.serialize(serverResponse));
                 }
 
             } while (serverResponse.getCode() != CommandExecutionCode.EXIT);

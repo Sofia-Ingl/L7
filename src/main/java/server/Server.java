@@ -14,6 +14,8 @@ import sun.misc.SignalHandler;
 import java.io.IOException;
 import java.net.*;
 import java.nio.channels.IllegalBlockingModeException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Server implements Runnable {
 
@@ -22,15 +24,15 @@ public class Server implements Runnable {
     private int port;
     private ServerSocket serverSocket;
     private final RequestProcessor requestProcessor;
-
+    private ExecutorService fixedThreadPool = Executors.newFixedThreadPool(10);
 
 
     public static void main(String[] args) {
 
-        try {
-            Signal s = new Signal("TSTP");
-            Signal.handle(s, SignalHandler.SIG_IGN);
-        } catch (IllegalArgumentException ignored) {}
+//        try {
+//            Signal s = new Signal("TSTP");
+//            Signal.handle(s, SignalHandler.SIG_IGN);
+//        } catch (IllegalArgumentException ignored) {}
 
         Pair<String, Integer> pathAndPort = getPathAndPort(args);
         CollectionStorage collectionStorage = new CollectionStorage();
@@ -69,8 +71,11 @@ public class Server implements Runnable {
 
                 Socket socket = establishClientConnection();
 
-                Thread clientConnection = new Thread(new ClientConnection(this, socket));
-                clientConnection.start();
+                //fixedThreadPool.execute(new ClientConnection(this, socket));
+                fixedThreadPool.submit(new ClientConnection(this, socket));
+
+//                Thread clientConnection = new Thread(new ClientConnection(this, socket));
+//                clientConnection.start();
 
             } catch (ConnectException e) {
                 logger.info(e.getMessage());
