@@ -33,7 +33,7 @@ public class ClientRequest implements Serializable {
         return "ClientRequest{" +
                 "command='" + command + '\'' +
                 ", commandArgument='" + commandArgument + '\'' +
-                ", createdObject=" + createdObject +
+                ", createdObject=" + createdObject.toString() +
                 '}';
     }
 }

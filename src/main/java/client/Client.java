@@ -1,5 +1,6 @@
 package client;
 
+import client.util.Authorization;
 import client.util.Interaction;
 import client.util.UserElementGetter;
 import shared.serializable.ClientRequest;
@@ -34,6 +35,7 @@ public class Client implements Runnable {
     private SocketChannel socketChannel;
     private Selector selector;
     private final Interaction interaction;
+    private final Authorization authorization;
 
     public static void main(String[] args) {
 
@@ -46,8 +48,10 @@ public class Client implements Runnable {
         Pair<String, Integer> hostAndPort = getHostAndPort(args);
 
         Interaction interaction = new Interaction(System.in, System.out, new UserElementGetter());
+        Authorization authorization = new Authorization(interaction);
+
         boolean reconnect;
-        Client client = new Client(hostAndPort.getFirst(), hostAndPort.getSecond(), interaction);
+        Client client = new Client(hostAndPort.getFirst(), hostAndPort.getSecond(), interaction, authorization);
         do {
             client.run();
             interaction.printlnMessage("Хотите переподключиться? (да|yes|y)");
@@ -59,10 +63,11 @@ public class Client implements Runnable {
     }
 
 
-    public Client(String host, int port, Interaction interaction) {
+    public Client(String host, int port, Interaction interaction, Authorization authorization) {
         this.host = host;
         this.port = port;
         this.interaction = interaction;
+        this.authorization = authorization;
     }
 
     @Override
@@ -80,6 +85,7 @@ public class Client implements Runnable {
 
             setConnectionWithServer();
             setSelector();
+            // AUTHORISATION
 
             try {
 

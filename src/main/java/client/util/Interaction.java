@@ -240,6 +240,7 @@ public class Interaction extends InteractiveConsoleUtils {
         return "Нет доступных команд";
     }
 
+
     private void systemInClosedProcessing() {
         if (defaultScanner == null || !defaultScanner.hasNextLine()) {
             printlnMessage("\nПоток ввода завершен, приложение будет закрыто");
