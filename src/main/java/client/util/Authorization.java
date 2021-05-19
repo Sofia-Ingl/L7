@@ -1,6 +1,7 @@
 package client.util;
 
 
+import server.util.RequestProcessor;
 import shared.serializable.ClientRequest;
 import shared.serializable.User;
 
@@ -87,7 +88,7 @@ public class Authorization {
     }
 
     private void authFailure() {
-        System.out.println("Возникла непредвиженная ошибка при запросе учетной записи пользователя");
+        System.out.println("Возникла непредвиденная ошибка при запросе учетной записи пользователя");
         System.exit(1);
     }
 }

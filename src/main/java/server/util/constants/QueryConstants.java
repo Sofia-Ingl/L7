@@ -21,7 +21,7 @@ public final class QueryConstants {
             DatabaseConstants.TAGLINE_COLUMN_IN_MOVIES + " TEXT NOT NULL,\n" +
             DatabaseConstants.CREATION_DATE_COLUMN_IN_MOVIES + " TIMESTAMP NOT NULL,\n" +
             DatabaseConstants.CREATION_DATE_ZONE_COLUMN_IN_MOVIES + " TEXT NOT NULL,\n" +
-            DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_MOVIES + " INTEGER REFERENCES " + DatabaseConstants.SCREENWRITER_TABLE + "(" + DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_SCREENWRITERS + "),\n" +
+            DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_MOVIES + " INTEGER NOT NULL REFERENCES " + DatabaseConstants.SCREENWRITER_TABLE + "(" + DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_SCREENWRITERS + "),\n" +
             DatabaseConstants.GENRE_COLUMN_IN_MOVIES + " TEXT,\n" +
             DatabaseConstants.USER_NAME_COLUMN_IN_MOVIES + " TEXT NOT NULL REFERENCES " + DatabaseConstants.USER_TABLE + "(" + DatabaseConstants.USER_NAME_COLUMN_IN_USERS + ")\n" +
             ")";

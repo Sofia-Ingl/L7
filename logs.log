@@ -1,14 +1,20 @@
-2021-05-19 16:00:49,352 ERROR [main] [DatabaseManager.java:31] Ошибка при установлении соединения с базой данных
-2021-05-19 16:00:49,355 ERROR [main] [DatabaseManager.java:32] ВАЖНО: пользователь "postgres" не прошёл проверку подлинности (по паролю) (pgjdbc: autodetected server-encoding to be windows-1251, if the message is not readable, please check database logs and/or host, port, dbname, user, password, pg_hba.conf)
-2021-05-19 16:00:49,355 ERROR [main] [DatabaseManager.java:35] org.postgresql.core.v3.ConnectionFactoryImpl.doAuthentication(ConnectionFactoryImpl.java:613)
-2021-05-19 16:00:49,355 ERROR [main] [DatabaseManager.java:35] org.postgresql.core.v3.ConnectionFactoryImpl.tryConnect(ConnectionFactoryImpl.java:161)
-2021-05-19 16:00:49,355 ERROR [main] [DatabaseManager.java:35] org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:213)
-2021-05-19 16:00:49,355 ERROR [main] [DatabaseManager.java:35] org.postgresql.core.ConnectionFactory.openConnection(ConnectionFactory.java:51)
-2021-05-19 16:00:49,355 ERROR [main] [DatabaseManager.java:35] org.postgresql.jdbc.PgConnection.<init>(PgConnection.java:223)
-2021-05-19 16:00:49,355 ERROR [main] [DatabaseManager.java:35] org.postgresql.Driver.makeConnection(Driver.java:465)
-2021-05-19 16:00:49,355 ERROR [main] [DatabaseManager.java:35] org.postgresql.Driver.connect(Driver.java:264)
-2021-05-19 16:00:49,355 ERROR [main] [DatabaseManager.java:35] java.sql.DriverManager.getConnection(DriverManager.java:664)
-2021-05-19 16:00:49,355 ERROR [main] [DatabaseManager.java:35] java.sql.DriverManager.getConnection(DriverManager.java:247)
-2021-05-19 16:00:49,356 ERROR [main] [DatabaseManager.java:35] server.util.DatabaseManager.establishConnectionWithDatabase(DatabaseManager.java:28)
-2021-05-19 16:00:49,356 ERROR [main] [DatabaseManager.java:35] server.util.DatabaseManager.<init>(DatabaseManager.java:20)
-2021-05-19 16:00:49,356 ERROR [main] [DatabaseManager.java:35] server.Server.main(Server.java:40)
+2021-05-19 18:46:55,990 INFO [main] [DatabaseManager.java:34] Соединение с базой данных установлено
+2021-05-19 18:46:56,154 INFO [main] [Server.java:72] Сервер запускается...
+2021-05-19 18:46:56,154 INFO [main] [Server.java:116] Фабрика сокетов создана
+2021-05-19 18:46:56,158 INFO [main] [Server.java:128] Прослушивается порт 3132
+2021-05-19 18:46:59,516 INFO [main] [Server.java:130] Соединение с клиентом, находящимся по адресу /127.0.0.1:54315, установлено
+2021-05-19 18:46:59,521 INFO [main] [Server.java:128] Прослушивается порт 3132
+2021-05-19 18:47:06,758 INFO [pool-1-thread-1] [ClientConnection.java:45] Аутентификация пользователя прошла успешно
+2021-05-19 18:47:06,762 INFO [Thread-3] [ClientConnection.java:103] Ответ успешно отправлен
+2021-05-19 18:47:06,766 INFO [pool-1-thread-1] [ClientConnection.java:51] Список доступных команд отправлен клиенту
+2021-05-19 18:47:06,768 INFO [Thread-4] [ClientConnection.java:103] Ответ успешно отправлен
+2021-05-19 18:47:12,932 INFO [pool-1-thread-1] [RequestProcessor.java:43] Исполняется команда show
+2021-05-19 18:47:12,944 INFO [Thread-5] [ClientConnection.java:103] Ответ успешно отправлен
+2021-05-19 18:48:49,975 WARN [pool-1-thread-1] [ClientConnection.java:86] Соединение разорвано
+2021-05-19 18:48:49,975 INFO [pool-1-thread-1] [ClientConnection.java:90] Клиент успешно отключается
+2021-05-19 18:48:56,102 INFO [main] [Server.java:130] Соединение с клиентом, находящимся по адресу /127.0.0.1:54360, установлено
+2021-05-19 18:48:56,102 INFO [main] [Server.java:128] Прослушивается порт 3132
+2021-05-19 18:49:03,523 INFO [pool-1-thread-2] [ClientConnection.java:45] Аутентификация пользователя прошла успешно
+2021-05-19 18:49:03,524 INFO [Thread-6] [ClientConnection.java:103] Ответ успешно отправлен
+2021-05-19 18:49:03,528 INFO [pool-1-thread-2] [ClientConnection.java:51] Список доступных команд отправлен клиенту
+2021-05-19 18:49:03,534 INFO [Thread-7] [ClientConnection.java:103] Ответ успешно отправлен

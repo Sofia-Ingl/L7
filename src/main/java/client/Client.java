@@ -8,8 +8,6 @@ import shared.serializable.Pair;
 import shared.serializable.ServerResponse;
 import shared.util.CommandExecutionCode;
 import shared.util.Serialization;
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
 
 import java.io.*;
 import java.net.ConnectException;
@@ -38,11 +36,6 @@ public class Client implements Runnable {
     private final Authorization authorization;
 
     public static void main(String[] args) {
-
-        try {
-            Signal s = new Signal("TSTP");
-            Signal.handle(s, SignalHandler.SIG_IGN);
-        } catch (IllegalArgumentException ignored) {}
 
         loadConfigs();
         Pair<String, Integer> hostAndPort = getHostAndPort(args);
@@ -85,35 +78,11 @@ public class Client implements Runnable {
 
             setConnectionWithServer();
             setSelector();
-            // AUTHORIZATION
 
             try {
 
-                socketChannel.register(selector, SelectionKey.OP_READ);
+                processAuthorization();
 
-                selector.select(5000);
-                boolean reconnect;
-                int reconnects = 0;
-                while (selector.selectedKeys().isEmpty()) {
-                    if (reconnects == 2) {
-                        throw new ConnectException("Лимит ожидания превышен => соединение будет разорвано");
-                    }
-                    interaction.printlnMessage("Сервер пока ничего не прислал. Хотите продолжить ожидание? (yes)");
-                    interaction.printMessage(">");
-                    reconnect = interaction.readLine().trim().toLowerCase().equals("yes");
-                    if (!reconnect) {
-                        System.exit(0);
-                    }
-                    reconnects++;
-                    selector.select(5000);
-                }
-
-                selector.selectedKeys().clear();
-                setCommandsAvailable();
-
-                interaction.printlnMessage(interaction.showCommandsAvailable());
-
-                socketChannel.register(selector, SelectionKey.OP_WRITE);
                 while (!clientExitCode) {
                     int count = selector.select();
                     if (count == 0) {
@@ -226,6 +195,100 @@ public class Client implements Runnable {
             e.printStackTrace();
         }
     }
+
+
+    private void processAuthorization() throws IOException {
+
+        boolean technicalsDone = false;
+        boolean currentAuthorization = true;
+        byte[] b;
+        CommandExecutionCode code;
+        SelectionKey selectionKey;
+        ClientRequest request;
+        ServerResponse response;
+
+        try {
+
+            checkIfChannelReady();
+
+            while (!technicalsDone) {
+
+                selector.select();
+                Set keys = selector.selectedKeys();
+                Iterator iterator = keys.iterator();
+
+                while (iterator.hasNext()) {
+                    selectionKey = (SelectionKey) iterator.next();
+                    iterator.remove();
+
+                    if (selectionKey.isWritable()) {
+                        socketChannel.register(selector, SelectionKey.OP_READ);
+                        request = null;
+                        if (currentAuthorization) {
+                            while (request == null) {
+                                request = authorization.logInSystem();
+                            }
+                        } else {
+                            request = new ClientRequest("send_available_commands", "", null);
+                        }
+                        if (socketChannel.isConnected()) {
+                            sendClientRequest(request);
+                        } else {
+                            throw new IOException();
+                        }
+
+                    }
+
+                    if (selectionKey.isReadable()) {
+                        socketChannel.register(selector, SelectionKey.OP_WRITE);
+                        if (currentAuthorization) {
+                            b = getResponse();
+                            response = (ServerResponse) Serialization.deserialize(b);
+                            code = response.getCode();
+                            interaction.printlnMessage(response.getResponseToPrint());
+                            if (code.equals(CommandExecutionCode.SUCCESS)) {
+                                currentAuthorization = false;
+                            }
+                        } else {
+                            setCommandsAvailable();
+                            technicalsDone = true;
+                        }
+                    }
+                }
+            }
+
+            interaction.printlnMessage(interaction.showCommandsAvailable());
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Ошибка соединения при авторизации");
+            throw new IOException();
+        }
+    }
+
+
+    public void checkIfChannelReady() throws IOException {
+
+        socketChannel.register(selector, SelectionKey.OP_WRITE);
+
+        selector.select(5000);
+        boolean reconnect;
+        int reconnects = 0;
+        while (selector.selectedKeys().isEmpty()) {
+            if (reconnects == 2) {
+                throw new ConnectException("Лимит ожидания превышен => соединение будет разорвано");
+            }
+            interaction.printlnMessage("Сервер пока не готов к приему соединения. Хотите продолжить ожидание? (yes)");
+            interaction.printMessage(">");
+            reconnect = interaction.readLine().trim().toLowerCase().equals("yes");
+            if (!reconnect) {
+                System.exit(0);
+            }
+            reconnects++;
+            selector.select(5000);
+        }
+    }
+
+
+
 
     private static Pair<String, Integer> getHostAndPort(String[] args) {
         try {

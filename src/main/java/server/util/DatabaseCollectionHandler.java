@@ -17,9 +17,11 @@ import java.util.LinkedHashSet;
 public class DatabaseCollectionHandler {
 
     private DatabaseManager databaseManager;
+    private UserHandler userHandler;
 
-    public DatabaseCollectionHandler(DatabaseManager databaseManager) {
+    public DatabaseCollectionHandler(DatabaseManager databaseManager, UserHandler userHandler) {
         this.databaseManager = databaseManager;
+        this.userHandler = userHandler;
     }
 
     public LinkedHashSet<Movie> loadCollectionFromDatabase() throws SQLException {
@@ -56,7 +58,7 @@ public class DatabaseCollectionHandler {
         String tagline = resultSet.getString(DatabaseConstants.TAGLINE_COLUMN_IN_MOVIES);
         MovieGenre genre = MovieGenre.valueOf(resultSet.getString(DatabaseConstants.GENRE_COLUMN_IN_MOVIES));
         Person screenwriter = getScreenwriterById(resultSet.getInt(DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_MOVIES));
-        User user = getUserByName(resultSet.getString(DatabaseConstants.USER_NAME_COLUMN_IN_MOVIES));
+        User user = userHandler.getUserByName(resultSet.getString(DatabaseConstants.USER_NAME_COLUMN_IN_MOVIES));
 
         if (screenwriter == null || user == null) {
             Server.logger.error("База данных неверно сконфигурирована | Не все связи между таблицами установлены");
@@ -65,24 +67,6 @@ public class DatabaseCollectionHandler {
         return new Movie(id, name, coordinates, creationDate, oscars, palms, tagline, genre, screenwriter, user);
     }
 
-    public User getUserByName(String name) throws SQLException {
-        User user = null;
-        PreparedStatement getUserStatement = null;
-        try {
-            getUserStatement = databaseManager.getPreparedStatement(QueryConstants.SELECT_USER_BY_NAME, false);
-            getUserStatement.setString(1, name);
-            ResultSet resultSet = getUserStatement.executeQuery();
-            if (resultSet.next()) {
-                user = new User(resultSet.getString(DatabaseConstants.USER_NAME_COLUMN_IN_USERS), resultSet.getString(DatabaseConstants.USER_PASSWORD_COLUMN_IN_USERS));
-            }
-        } catch (SQLException e) {
-            Server.logger.info("Ошибка при выборке пользователя по имени из базы данных");
-            throw e;
-        } finally {
-            if (getUserStatement != null) databaseManager.closeStatement(getUserStatement);
-        }
-        return user;
-    }
 
     public Person getScreenwriterById(int id) throws SQLException {
         Person screenwriter = null;

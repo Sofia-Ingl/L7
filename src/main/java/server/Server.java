@@ -4,7 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import server.commands.abstracts.InnerServerCommand;
 import server.commands.abstracts.UserCommand;
+import server.commands.inner.Login;
+import server.commands.inner.Register;
 import server.commands.inner.Save;
+import server.commands.inner.SendCommands;
 import server.commands.user.*;
 import server.util.*;
 import shared.serializable.Pair;
@@ -38,13 +41,14 @@ public class Server implements Runnable {
 
         Pair<Pair<String, String>, Integer> databaseAddrUserAndPort = processArguments(args);
         DatabaseManager databaseManager = new DatabaseManager(databaseAddrUserAndPort.getFirst().getFirst(), databaseAddrUserAndPort.getFirst().getSecond(), readDatabasePass());
-        DatabaseCollectionHandler databaseCollectionHandler = new DatabaseCollectionHandler(databaseManager);
+        UserHandler userHandler = new UserHandler(databaseManager);
+        DatabaseCollectionHandler databaseCollectionHandler = new DatabaseCollectionHandler(databaseManager, userHandler);
         CollectionStorage collectionStorage = new CollectionStorage(databaseCollectionHandler);
         collectionStorage.loadCollectionFromDatabase();
 
         //CollectionStorage collectionStorage = new CollectionStorage();
         //collectionStorage.loadCollection(databaseAddrAndPort.getFirst());
-        InnerServerCommand[] innerServerCommands = {new Save()};
+        InnerServerCommand[] innerServerCommands = {new Save(), new Login(), new Register(), new SendCommands()};
         UserCommand[] userCommands = {new Help(), new History(), new Clear(), new Add(), new Show(), new ExecuteScript(),
                 new GoldenPalmsFilter(), new Info(), new AddIfMax(), new PrintAscending(), new RemoveAllByScreenwriter(),
                 new RemoveById(), new RemoveGreater(), new Update(), new Exit()};
@@ -195,12 +199,12 @@ public class Server implements Runnable {
     }
 
     private static String readDatabasePass() {
+        System.out.println("Введите пароль от учетной записи в бд:");
+        System.out.print(">");
         Console console = System.console();
         if (console != null) {
             return String.valueOf(console.readPassword()).trim();
         } else {
-            System.out.println("Введите пароль от учетной записи в бд:");
-            System.out.print(">");
             Scanner scanner = new Scanner(System.in);
             if (scanner.hasNext()) return scanner.nextLine().trim();
         }
