@@ -1,6 +1,8 @@
 package server.commands.abstracts;
 import server.util.CollectionStorage;
 import server.util.CommandWrapper;
+import server.util.DatabaseCollectionHandler;
+import server.util.UserHandler;
 
 public abstract class Command implements Executables {
     private final String name;
@@ -9,6 +11,8 @@ public abstract class Command implements Executables {
     private final boolean hasStringArg;
     private CommandWrapper commandWrapper = null;
     private CollectionStorage collectionStorage = null;
+    private UserHandler userHandler = null;
+    private DatabaseCollectionHandler databaseCollectionHandler = null;
 
     public Command(String name, String utility, boolean isInteractive, boolean hasStringArg) {
         this.name = name;
@@ -39,6 +43,22 @@ public abstract class Command implements Executables {
 
     public void setCollectionStorage(CollectionStorage collectionStorage) {
         this.collectionStorage = collectionStorage;
+    }
+
+    public UserHandler getUserHandler() {
+        return userHandler;
+    }
+
+    public void setUserHandler(UserHandler userHandler) {
+        this.userHandler = userHandler;
+    }
+
+    public DatabaseCollectionHandler getDatabaseCollectionHandler() {
+        return databaseCollectionHandler;
+    }
+
+    public void setDatabaseCollectionHandler(DatabaseCollectionHandler databaseCollectionHandler) {
+        this.databaseCollectionHandler = databaseCollectionHandler;
     }
 
     public boolean isInteractive() {

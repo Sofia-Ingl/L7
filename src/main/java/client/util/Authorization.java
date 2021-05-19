@@ -1,16 +1,16 @@
 package client.util;
 
 
-import server.util.RequestProcessor;
 import shared.serializable.ClientRequest;
 import shared.serializable.User;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 
 public class Authorization {
 
-    private final String login = "login";
-    private final String register = "register";
-    private Interaction interaction;
+    private final Interaction interaction;
 
     public Authorization(Interaction interaction) {
         this.interaction = interaction;
@@ -18,8 +18,10 @@ public class Authorization {
 
     public ClientRequest logInSystem() {
         try {
+            String register = "register";
+            String login = "login";
             String command = (alreadyRegistered()) ? login : register;
-            return new ClientRequest(command, "", new User(getLogin(), getPassword()));
+            return new ClientRequest(command, "", new User(getLogin(), getEncodedPassword(getPassword())));
         } catch (Exception e) {
             authFailure();
         }
@@ -44,7 +46,7 @@ public class Authorization {
     }
 
     private String getLogin() {
-        String login = "Ffuuu";
+        String login = "L";
         try {
             interaction.printlnMessage("Введите логин:");
             boolean incorrectInput = true;
@@ -62,6 +64,25 @@ public class Authorization {
             authFailure();
         }
         return login;
+    }
+
+    private String getEncodedPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] bytes = md.digest(password.getBytes());
+            StringBuilder builder = new StringBuilder();
+            String s;
+            for (byte b : bytes) {
+                s = Integer.toHexString(b);
+                try {
+                    builder.append(s.substring(s.length() - 2));
+                } catch (IndexOutOfBoundsException e) {
+                    builder.append("0").append(s);
+                }
+            }
+            return builder.toString();
+        } catch (NoSuchAlgorithmException ignored) {}
+        return password;
     }
 
     private String getPassword() {

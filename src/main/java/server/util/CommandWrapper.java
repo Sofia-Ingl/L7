@@ -20,18 +20,22 @@ public class CommandWrapper {
     private final HashMap<String, InnerServerCommand> allInnerCommands = new HashMap<>();
     private final ArrayList<Command> lastSixCommands = new ArrayList<>();
 
-    public CommandWrapper(CollectionStorage collectionStorage, UserCommand[] listOfUserCommands, InnerServerCommand[] innerServerCommands) {
+    public CommandWrapper(CollectionStorage collectionStorage, DatabaseCollectionHandler databaseCollectionHandler, UserHandler userHandler, UserCommand[] listOfUserCommands, InnerServerCommand[] innerServerCommands) {
 
         for (UserCommand userCommand : listOfUserCommands) {
             allCommandsAvailable.put(userCommand.getName(), userCommand);
             userCommand.setCommandWrapper(this);
+            userCommand.setDatabaseCollectionHandler(databaseCollectionHandler);
             userCommand.setCollectionStorage(collectionStorage);
+            userCommand.setUserHandler(userHandler);
         }
 
         for (InnerServerCommand command : innerServerCommands) {
             allInnerCommands.put(command.getName(), command);
             command.setCommandWrapper(this);
             command.setCollectionStorage(collectionStorage);
+            command.setDatabaseCollectionHandler(databaseCollectionHandler);
+            command.setUserHandler(userHandler);
         }
     }
 

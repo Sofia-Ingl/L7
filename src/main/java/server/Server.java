@@ -34,11 +34,6 @@ public class Server implements Runnable {
 
     public static void main(String[] args) {
 
-//        try {
-//            Signal s = new Signal("TSTP");
-//            Signal.handle(s, SignalHandler.SIG_IGN);
-//        } catch (IllegalArgumentException ignored) {}
-
         Pair<Pair<String, String>, Integer> databaseAddrUserAndPort = processArguments(args);
         DatabaseManager databaseManager = new DatabaseManager(databaseAddrUserAndPort.getFirst().getFirst(), databaseAddrUserAndPort.getFirst().getSecond(), readDatabasePass());
         UserHandler userHandler = new UserHandler(databaseManager);
@@ -53,7 +48,7 @@ public class Server implements Runnable {
                 new GoldenPalmsFilter(), new Info(), new AddIfMax(), new PrintAscending(), new RemoveAllByScreenwriter(),
                 new RemoveById(), new RemoveGreater(), new Update(), new Exit()};
 
-        Server server = new Server(databaseAddrUserAndPort.getSecond(), new RequestProcessor(new CommandWrapper(collectionStorage, userCommands, innerServerCommands)));
+        Server server = new Server(databaseAddrUserAndPort.getSecond(), new RequestProcessor(new CommandWrapper(collectionStorage, databaseCollectionHandler, userHandler, userCommands, innerServerCommands)));
         addShutdownHook(server);
 
         server.run();

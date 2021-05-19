@@ -35,4 +35,26 @@ public class UserHandler {
         }
         return user;
     }
+
+    public boolean findUserByNameAndPass(User user) throws SQLException {
+        PreparedStatement getUserStatement = null;
+        try {
+            getUserStatement = databaseManager.getPreparedStatement(QueryConstants.SELECT_USER_BY_NAME_AND_PASSWORD, false);
+            getUserStatement.setString(1, user.getLogin());
+            getUserStatement.setString(2, user.getPassword());
+            ResultSet resultSet = getUserStatement.executeQuery();
+            return resultSet.next();
+        } finally {
+            if (getUserStatement != null) databaseManager.closeStatement(getUserStatement);
+        }
+    }
+
+    public boolean insertUser(User user) throws SQLException {
+        if (getUserByName(user.getLogin()) != null) return false;
+        PreparedStatement insertUserStatement = databaseManager.getPreparedStatement(QueryConstants.INSERT_USER, false);
+        insertUserStatement.setString(1, user.getLogin());
+        insertUserStatement.setString(2, user.getPassword());
+        if (insertUserStatement.executeUpdate() == 0) throw new SQLException();
+        return true;
+    }
 }

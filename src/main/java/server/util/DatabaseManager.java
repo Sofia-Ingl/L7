@@ -104,5 +104,44 @@ public class DatabaseManager {
         }
     }
 
+    public void setAutoCommit() {
+        try {
+            connection.setAutoCommit(true);
+        } catch (SQLException e) {
+            Server.logger.warn("Ошибка при установке AutoCommit режима базы данных");
+            e.printStackTrace();
+        }
+    }
+
+    public void setRegulatedCommit() {
+        try {
+            connection.setAutoCommit(false);
+        } catch (SQLException e) {
+            Server.logger.warn("Ошибка при изменении режима работы с базой данных");
+            e.printStackTrace();
+        }
+    }
+
+    public void rollback() {
+        try {
+            if (!connection.getAutoCommit()) {
+                connection.rollback();
+            }
+        } catch (SQLException e) {
+            Server.logger.warn("Ошибка при отмене изменений");
+            e.printStackTrace();
+        }
+    }
+
+    public Savepoint setSavepoint() {
+        try {
+            return connection.setSavepoint();
+        } catch (SQLException e) {
+            Server.logger.warn("Ошибка при отмене изменений");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 }

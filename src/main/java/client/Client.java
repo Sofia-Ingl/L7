@@ -166,7 +166,7 @@ public class Client implements Runnable {
 
         try {
             socketChannel.write(ByteBuffer.wrap(Serialization.serialize(clientRequest)));
-            interaction.printlnMessage("Запрос успешно отправлен");
+            //interaction.printlnMessage("Запрос успешно отправлен");
         } catch (IOException e) {
             interaction.printlnMessage("Возникла ошибка при отправке пользовательского запроса на сервер");
         }

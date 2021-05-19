@@ -60,8 +60,10 @@ public final class QueryConstants {
 
     public static final String SELECT_USER_BY_NAME = "SELECT * FROM " + DatabaseConstants.USER_TABLE + " WHERE " + DatabaseConstants.USER_NAME_COLUMN_IN_USERS + " = ?";
 
-    public static final String SELECT_SCREENWRITER_BY_ID = "SELECT * FROM " + DatabaseConstants.SCREENWRITER_TABLE + " WHERE " + DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_SCREENWRITERS + " = ?";
+    public static final String SELECT_USER_BY_NAME_AND_PASSWORD = "SELECT * FROM " + DatabaseConstants.USER_TABLE + " WHERE " + DatabaseConstants.USER_NAME_COLUMN_IN_USERS +
+            " = ? AND " + DatabaseConstants.USER_PASSWORD_COLUMN_IN_USERS + " = ?";
 
+    public static final String SELECT_SCREENWRITER_BY_ID = "SELECT * FROM " + DatabaseConstants.SCREENWRITER_TABLE + " WHERE " + DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_SCREENWRITERS + " = ?";
 
 
     private QueryConstants() {

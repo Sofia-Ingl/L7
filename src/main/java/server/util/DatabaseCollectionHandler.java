@@ -91,4 +91,8 @@ public class DatabaseCollectionHandler {
         }
         return screenwriter;
     }
+
+    public UserHandler getUserHandler() {
+        return userHandler;
+    }
 }
