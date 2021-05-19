@@ -6,6 +6,7 @@ import shared.exceptions.MalformedCollectionContentException;
 import shared.serializable.Pair;
 
 import java.lang.reflect.Type;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -16,11 +17,13 @@ import java.util.stream.Collectors;
  * Предоставляет методы доступа и обработки, используется командами.
  */
 public class CollectionStorage {
+
+    private DatabaseCollectionHandler databaseCollectionHandler;
+    private LinkedHashSet<Movie> collection = null;
+
     private String path = null;
     private final Type collectionType = LinkedHashSet.class;
     private final Type contentType = Movie.class;
-
-    private LinkedHashSet<Movie> collection = null;
 
     private LocalDateTime sortedCollectionUpdateTime = null;
     private ArrayList<Movie> sortedCollection = null;
@@ -33,21 +36,41 @@ public class CollectionStorage {
 
     private Movie maxMovie = null;
 
+    public CollectionStorage(DatabaseCollectionHandler databaseCollectionHandler) {
+        this.databaseCollectionHandler = databaseCollectionHandler;
+    }
+
+    public void loadCollectionFromDatabase() {
+        try {
+            collection = databaseCollectionHandler.loadCollectionFromDatabase();
+        } catch (SQLException e) {
+            Server.logger.error("Коллекция не была успешно загружена в память...");
+            Server.logger.error("Осуществляется выход из приложения...");
+            System.exit(1);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public CollectionStorage() {}
+
     public String getPath() {
         return path;
     }
 
-    /**
-     * Метод, призванный загрузить коллекцию в хранилище-обертку.
-     * Одновремнно представляет собой последний рубеж защиты от неправильного (не подходящего под критерии),
-     * но корректного с точки зрения парсинга содержимого файла.
-     * В этом случае метод выдает ошибку MalformedCollectionContentException, и в блоке ее обработки осуществляется выход
-     * из программы.
-     * Также выход происходит в случае, когда ошибки возникают еще на стадии парсинга.
-     * Иными словами, правильная загрузка коллекции нужна для корректной работы приложения.
-     *
-     * @param fullPath путь к файлу
-     */
     public void loadCollection(String fullPath) {
         try {
             path = fullPath;

@@ -14,6 +14,7 @@ public final class DatabaseConstants {
     public static final String PALMS_COUNT_COLUMN_IN_MOVIES = "gPalmsCount";
     public static final String TAGLINE_COLUMN_IN_MOVIES = "tagline";
     public static final String CREATION_DATE_COLUMN_IN_MOVIES = "creationDate";
+    public static final String CREATION_DATE_ZONE_COLUMN_IN_MOVIES = "creationDateZone";
     public static final String SCREENWRITER_ID_COLUMN_IN_MOVIES = "screenwriterId";
     public static final String GENRE_COLUMN_IN_MOVIES = "genreName";
     public static final String USER_NAME_COLUMN_IN_MOVIES = "userName";

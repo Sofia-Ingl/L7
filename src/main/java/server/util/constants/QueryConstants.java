@@ -2,6 +2,9 @@ package server.util.constants;
 
 public final class QueryConstants {
 
+    /*
+    CREATORS
+     */
     public static final String MOVIE_ID_SEQUENCE_CREATOR = "CREATE SEQUENCE IF NOT EXISTS "
             + DatabaseConstants.MOVIE_ID_SEQUENCE + " START 1;";
 
@@ -17,6 +20,7 @@ public final class QueryConstants {
             DatabaseConstants.PALMS_COUNT_COLUMN_IN_MOVIES + " BIGINT NOT NULL CHECK (" + DatabaseConstants.PALMS_COUNT_COLUMN_IN_MOVIES + " > 0),\n" +
             DatabaseConstants.TAGLINE_COLUMN_IN_MOVIES + " TEXT NOT NULL,\n" +
             DatabaseConstants.CREATION_DATE_COLUMN_IN_MOVIES + " TIMESTAMP NOT NULL,\n" +
+            DatabaseConstants.CREATION_DATE_ZONE_COLUMN_IN_MOVIES + " TEXT NOT NULL,\n" +
             DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_MOVIES + " INTEGER REFERENCES " + DatabaseConstants.SCREENWRITER_TABLE + "(" + DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_SCREENWRITERS + "),\n" +
             DatabaseConstants.GENRE_COLUMN_IN_MOVIES + " TEXT,\n" +
             DatabaseConstants.USER_NAME_COLUMN_IN_MOVIES + " TEXT NOT NULL REFERENCES " + DatabaseConstants.USER_TABLE + "(" + DatabaseConstants.USER_NAME_COLUMN_IN_USERS + ")\n" +
@@ -36,6 +40,9 @@ public final class QueryConstants {
             ")";
 
 
+    /*
+    INSERTS
+     */
     public static final String INSERT_SCREENWRITER = "INSERT INTO " + DatabaseConstants.SCREENWRITER_TABLE
             + " VALUES (nextval('" + DatabaseConstants.SCREENWRITER_ID_SEQUENCE + "'), ?, ?, ?, ?)";
 
@@ -43,6 +50,18 @@ public final class QueryConstants {
             + " VALUES (nextval('" + DatabaseConstants.MOVIE_ID_SEQUENCE + "'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     public static final String INSERT_USER = "INSERT INTO " + DatabaseConstants.USER_TABLE + " VALUES (?, ?)";
+
+    /*
+    SELECTS
+     */
+    public static final String SELECT_ALL_MOVIES = "SELECT * FROM " + DatabaseConstants.MOVIE_TABLE;
+    public static final String SELECT_ALL_SCREENWRITERS = "SELECT * FROM " + DatabaseConstants.SCREENWRITER_TABLE;
+    public static final String SELECT_ALL_USERS = "SELECT * FROM " + DatabaseConstants.USER_TABLE;
+
+    public static final String SELECT_USER_BY_NAME = "SELECT * FROM " + DatabaseConstants.USER_TABLE + " WHERE " + DatabaseConstants.USER_NAME_COLUMN_IN_USERS + " = ?";
+
+    public static final String SELECT_SCREENWRITER_BY_ID = "SELECT * FROM " + DatabaseConstants.SCREENWRITER_TABLE + " WHERE " + DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_SCREENWRITERS + " = ?";
+
 
 
     private QueryConstants() {

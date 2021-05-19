@@ -11,9 +11,11 @@ import shared.serializable.Pair;
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
 
+import java.io.Console;
 import java.io.IOException;
 import java.net.*;
 import java.nio.channels.IllegalBlockingModeException;
+import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -34,15 +36,20 @@ public class Server implements Runnable {
 //            Signal.handle(s, SignalHandler.SIG_IGN);
 //        } catch (IllegalArgumentException ignored) {}
 
-        Pair<String, Integer> pathAndPort = getPathAndPort(args);
-        CollectionStorage collectionStorage = new CollectionStorage();
-        collectionStorage.loadCollection(pathAndPort.getFirst());
+        Pair<Pair<String, String>, Integer> databaseAddrUserAndPort = processArguments(args);
+        DatabaseManager databaseManager = new DatabaseManager(databaseAddrUserAndPort.getFirst().getFirst(), databaseAddrUserAndPort.getFirst().getSecond(), readDatabasePass());
+        DatabaseCollectionHandler databaseCollectionHandler = new DatabaseCollectionHandler(databaseManager);
+        CollectionStorage collectionStorage = new CollectionStorage(databaseCollectionHandler);
+        collectionStorage.loadCollectionFromDatabase();
+
+        //CollectionStorage collectionStorage = new CollectionStorage();
+        //collectionStorage.loadCollection(databaseAddrAndPort.getFirst());
         InnerServerCommand[] innerServerCommands = {new Save()};
         UserCommand[] userCommands = {new Help(), new History(), new Clear(), new Add(), new Show(), new ExecuteScript(),
                 new GoldenPalmsFilter(), new Info(), new AddIfMax(), new PrintAscending(), new RemoveAllByScreenwriter(),
                 new RemoveById(), new RemoveGreater(), new Update(), new Exit()};
 
-        Server server = new Server(pathAndPort.getSecond(), new RequestProcessor(new CommandWrapper(collectionStorage, userCommands, innerServerCommands)));
+        Server server = new Server(databaseAddrUserAndPort.getSecond(), new RequestProcessor(new CommandWrapper(collectionStorage, userCommands, innerServerCommands)));
         addShutdownHook(server);
 
         server.run();
@@ -156,18 +163,23 @@ public class Server implements Runnable {
     }
 */
 
-    private static Pair<String, Integer> getPathAndPort(String[] args) {
+    private static Pair<Pair<String, String>, Integer> processArguments(String[] args) {
         try {
-            if (args.length > 1) {
-                String path = args[0];
-                int port = Integer.parseInt(args[1]);
+
+            if (args.length == 4) {
+                String databaseHost = args[0];
+                String databaseName = args[1];
+                String databaseUsername = args[2];
+                String databaseAddress = "jdbc:postgresql://" + databaseHost + ":5432/" + databaseName;
+                int port = Integer.parseInt(args[3]);
+
                 if (port <= 1024) {
                     throw new IllegalArgumentException("Указан недопустимый порт");
                 }
-                return new Pair<>(path, port);
+                return new Pair<>(new Pair<>(databaseAddress, databaseUsername), port);
 
             } else {
-                throw new IllegalArgumentException("Не указан путь к коллекции и/или порт, который будет прослушиваться сервером");
+                throw new IllegalArgumentException("При запуске jar некорректно указаны аргументы (правильный вариант: java -jar <имя jar> <хост бд> <имя бд> <имя пользователя> <порт сервера>");
             }
         } catch (NumberFormatException e) {
             logger.error("Порт должен быть целым числом");
@@ -179,8 +191,20 @@ public class Server implements Runnable {
             logger.error("Непредвиденная ошибка при расшифровке аргументов командной строки");
             emergencyExit();
         }
+        return new Pair<>(new Pair<>("", ""), 8234);
+    }
 
-        return new Pair<>("", 1376);
+    private static String readDatabasePass() {
+        Console console = System.console();
+        if (console != null) {
+            return String.valueOf(console.readPassword()).trim();
+        } else {
+            System.out.println("Введите пароль от учетной записи в бд:");
+            System.out.print(">");
+            Scanner scanner = new Scanner(System.in);
+            if (scanner.hasNext()) return scanner.nextLine().trim();
+        }
+        return "";
     }
 
     private static void emergencyExit() {
@@ -194,7 +218,7 @@ public class Server implements Runnable {
                     logger.info("Выполняются действия после сигнала о прекращении работы сервера");
                     server.getRequestProcessor().getCommandWrapper().getAllInnerCommands().get("save").execute("", null);
                 }
-        ));
+                ));
     }
 
     public RequestProcessor getRequestProcessor() {

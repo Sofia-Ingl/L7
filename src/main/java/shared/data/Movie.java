@@ -1,6 +1,7 @@
 package shared.data;
 
 import com.google.gson.annotations.Expose;
+import shared.serializable.User;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -33,6 +34,8 @@ public class Movie implements Comparable<Movie>, Serializable {
     @Expose
     private Person screenwriter;
 
+    private User owner;
+
     public Movie(String name, Coordinates coordinates, int oscars, long goldenPalmCount, String tags, MovieGenre genre, Person screenwriter) {
         this.name = name;
         this.coordinates = coordinates;
@@ -41,6 +44,19 @@ public class Movie implements Comparable<Movie>, Serializable {
         this.tagline = tags;
         this.genre = genre;
         this.screenwriter = screenwriter;
+    }
+
+    public Movie(int id, String name, Coordinates coordinates, ZonedDateTime creationDate, int oscars, long palms, String tagline, MovieGenre genre, Person screenwriter, User user) {
+        this.id = id;
+        this.name = name;
+        this.coordinates = coordinates;
+        this.creationDate = creationDate;
+        this.oscarsCount = oscars;
+        this.goldenPalmCount = palms;
+        this.tagline = tagline;
+        this.genre = genre;
+        this.screenwriter = screenwriter;
+        this.owner = user;
     }
 
 
