@@ -13,7 +13,7 @@ import java.sql.SQLException;
 public class Update extends UserCommand {
 
     public Update() {
-        super("update", "обновить значение элемента коллекции, id которого равен заданному", true, true);
+        super("update", "обновить значение элемента коллекции, id которого равен заданному", true, true, true);
     }
 
     @Override

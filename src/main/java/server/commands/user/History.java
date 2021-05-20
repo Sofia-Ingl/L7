@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class History extends UserCommand {
 
     public History() {
-        super("history", "вывести последние 6 команд (без их аргументов)", false, false);
+        super("history", "вывести последние 6 команд (без их аргументов)", false, false, false);
     }
 
 

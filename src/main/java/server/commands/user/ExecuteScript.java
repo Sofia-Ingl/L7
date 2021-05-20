@@ -10,7 +10,7 @@ import shared.serializable.User;
 public class ExecuteScript extends UserCommand {
 
     public ExecuteScript() {
-        super("execute_script", "считать и исполнить скрипт из указанного файла. В скрипте содержатся команды в таком же виде, в котором их вводит пользователь в интерактивном режиме.", false, true);
+        super("execute_script", "считать и исполнить скрипт из указанного файла. В скрипте содержатся команды в таком же виде, в котором их вводит пользователь в интерактивном режиме.", false, true, false);
     }
 
     @Override

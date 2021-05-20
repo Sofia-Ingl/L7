@@ -7,7 +7,7 @@ import shared.serializable.User;
 public class GoldenPalmsFilter extends UserCommand {
 
     public GoldenPalmsFilter() {
-        super("filter_greater_than_golden_palm_count", "вывести элементы, значение поля goldenPalmCount которых больше заданного", false, true);
+        super("filter_greater_than_golden_palm_count", "вывести элементы, значение поля goldenPalmCount которых больше заданного", false, true, true);
     }
 
     @Override

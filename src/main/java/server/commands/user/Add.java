@@ -11,7 +11,7 @@ import java.sql.SQLException;
 public class Add extends UserCommand {
 
     public Add() {
-        super("add", "добавить новый элемент в коллекцию", true, false);
+        super("add", "добавить новый элемент в коллекцию", true, false, true);
     }
 
     @Override

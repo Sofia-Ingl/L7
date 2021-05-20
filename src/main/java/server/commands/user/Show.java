@@ -8,7 +8,7 @@ import shared.serializable.User;
 public class Show extends UserCommand {
 
     public Show() {
-        super("show", " вывести в стандартный поток вывода все элементы коллекции в строковом представлении", false, false);
+        super("show", " вывести в стандартный поток вывода все элементы коллекции в строковом представлении", false, false, true);
     }
 
     @Override

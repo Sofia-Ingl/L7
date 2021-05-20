@@ -9,7 +9,7 @@ public class Help extends UserCommand {
     private String commandInfo = null;
 
     public Help() {
-        super("help", "вывести справку по доступным командам", false, false);
+        super("help", "вывести справку по доступным командам", false, false, false);
     }
 
 

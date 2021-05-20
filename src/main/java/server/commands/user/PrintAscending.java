@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class PrintAscending extends UserCommand {
 
     public PrintAscending() {
-        super("print_ascending", "вывести элементы коллекции в порядке возрастания", false, false);
+        super("print_ascending", "вывести элементы коллекции в порядке возрастания", false, false, true);
     }
 
     @Override

@@ -9,7 +9,7 @@ import java.sql.SQLException;
 public class RemoveAllByScreenwriter extends UserCommand {
 
     public RemoveAllByScreenwriter() {
-        super("remove_all_by_screenwriter", "удалить из коллекции все элементы, значение поля screenwriter которого эквивалентно заданному", false, true);
+        super("remove_all_by_screenwriter", "удалить из коллекции все элементы, значение поля screenwriter которого эквивалентно заданному", false, true, true);
     }
 
     @Override

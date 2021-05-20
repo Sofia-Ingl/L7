@@ -6,7 +6,6 @@ import server.commands.abstracts.InnerServerCommand;
 import server.commands.abstracts.UserCommand;
 import server.commands.inner.Login;
 import server.commands.inner.Register;
-import server.commands.inner.Save;
 import server.commands.inner.SendCommands;
 import server.commands.user.*;
 import server.util.*;
@@ -23,7 +22,7 @@ public class Server implements Runnable {
 
     private final int port;
     private ServerSocket serverSocket;
-    private final RequestProcessor requestProcessor;
+    private CommandWrapper commandWrapper;
     private final ExecutorService fixedThreadPool = Executors.newFixedThreadPool(10);
 
 
@@ -36,22 +35,21 @@ public class Server implements Runnable {
         CollectionStorage collectionStorage = new CollectionStorage(databaseCollectionHandler);
         collectionStorage.loadCollectionFromDatabase();
 
-        InnerServerCommand[] innerServerCommands = {new Save(), new Login(), new Register(), new SendCommands()};
+        InnerServerCommand[] innerServerCommands = {new Login(), new Register(), new SendCommands()};
         UserCommand[] userCommands = {new Help(), new History(), new Clear(), new Add(), new Show(), new ExecuteScript(),
                 new GoldenPalmsFilter(), new Info(), new AddIfMax(), new PrintAscending(), new RemoveAllByScreenwriter(),
                 new RemoveById(), new RemoveGreater(), new Update(), new Exit()};
 
-        Server server = new Server(databaseAddrUserAndPort.getSecond(), new RequestProcessor(new CommandWrapper(collectionStorage, databaseCollectionHandler, userHandler, userCommands, innerServerCommands)));
+        Server server = new Server(databaseAddrUserAndPort.getSecond(), new CommandWrapper(collectionStorage, databaseCollectionHandler, userHandler, userCommands, innerServerCommands));
         addShutdownHook(server);
 
         server.run();
     }
 
 
-    Server(int port, RequestProcessor requestProcessor) {
+    Server(int port, CommandWrapper commandWrapper) {
         this.port = port;
-        this.requestProcessor = requestProcessor;
-
+        this.commandWrapper = commandWrapper;
     }
 
     @Override
@@ -74,7 +72,7 @@ public class Server implements Runnable {
 
             } catch (ConnectException e) {
                 logger.info(e.getMessage());
-                requestProcessor.getCommandWrapper().getAllInnerCommands().get("save").execute("", null, null);
+                //requestProcessor.getCommandWrapper().getAllInnerCommands().get("save").execute("", null, null);
                 noServerExitCode = false;
             } catch (IllegalThreadStateException e) {
                 logger.info("Ошибка при запуске потока для обслуживания клиентского соединения");
@@ -161,13 +159,13 @@ public class Server implements Runnable {
         Runtime.getRuntime().addShutdownHook(
                 new Thread(() -> {
                     logger.info("Выполняются действия после сигнала о прекращении работы сервера");
-                    server.getRequestProcessor().getCommandWrapper().getAllInnerCommands().get("save").execute("", null, null);
+                    //server.getRequestProcessor().getCommandWrapper().getAllInnerCommands().get("save").execute("", null, null);
                 }
                 ));
     }
 
-    public RequestProcessor getRequestProcessor() {
-        return requestProcessor;
+    public CommandWrapper getCommandWrapper() {
+        return commandWrapper;
     }
 
 }

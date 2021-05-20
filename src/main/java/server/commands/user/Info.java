@@ -8,7 +8,7 @@ import shared.serializable.User;
 public class Info extends UserCommand {
 
     public Info() {
-        super("info", "вывести в стандартный поток вывода информацию о коллекции (тип, дата инициализации, количество элементов и т.д.)", false, false);
+        super("info", "вывести в стандартный поток вывода информацию о коллекции (тип, дата инициализации, количество элементов и т.д.)", false, false, true);
     }
 
     @Override

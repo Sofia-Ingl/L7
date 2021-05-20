@@ -9,16 +9,21 @@ public abstract class Command implements Executables {
     private final String utility;
     private final boolean isInteractive;
     private final boolean hasStringArg;
+
+    private final boolean needsStorageAccess;
+    private final boolean isWrittenToHistory;
     private CommandWrapper commandWrapper = null;
     private CollectionStorage collectionStorage = null;
     private UserHandler userHandler = null;
     private DatabaseCollectionHandler databaseCollectionHandler = null;
 
-    public Command(String name, String utility, boolean isInteractive, boolean hasStringArg) {
+    public Command(String name, String utility, boolean isInteractive, boolean hasStringArg, boolean needsCollectionAccess, boolean isWrittenToHistory) {
         this.name = name;
         this.utility = utility;
         this.isInteractive = isInteractive;
         this.hasStringArg = hasStringArg;
+        this.needsStorageAccess = needsCollectionAccess;
+        this.isWrittenToHistory = isWrittenToHistory;
     }
 
     public String getName() {
@@ -67,6 +72,14 @@ public abstract class Command implements Executables {
 
     public boolean hasStringArg() {
         return hasStringArg;
+    }
+
+    public boolean isNeedsStorageAccess() {
+        return needsStorageAccess;
+    }
+
+    public boolean isWrittenToHistory() {
+        return isWrittenToHistory;
     }
 }
 

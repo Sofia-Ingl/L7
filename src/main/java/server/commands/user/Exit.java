@@ -7,7 +7,7 @@ import shared.serializable.User;
 public class Exit extends UserCommand {
 
     public Exit() {
-        super("exit", "завершить программу", false, false);
+        super("exit", "завершить программу", false, false, false);
     }
 
     @Override

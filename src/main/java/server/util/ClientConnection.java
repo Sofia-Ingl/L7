@@ -24,8 +24,6 @@ public class ClientConnection implements Runnable {
 
         ClientRequest clientRequest;
         ServerResponse serverResponse;
-        ResponseWrapper responseWrapper;
-        Thread requestProcessingThread;
 
         boolean technicalInteraction = true;
         boolean listOfCommandsToSend = false;
@@ -39,12 +37,7 @@ public class ClientConnection implements Runnable {
                 clientRequest = (ClientRequest) Serialization.deserialize(b);
                 if (technicalInteraction) {
 
-                    responseWrapper = new ResponseWrapper(clientRequest, server.getRequestProcessor(), true);
-                    requestProcessingThread = new Thread(responseWrapper);
-                    requestProcessingThread.start();
-                    requestProcessingThread.join();
-
-                    serverResponse = responseWrapper.getComputedResponse();
+                    serverResponse = processRequestInNewThread(clientRequest, true);
 
                     //serverResponse = server.getRequestProcessor().processTechnicalRequests(clientRequest);
 
@@ -56,18 +49,18 @@ public class ClientConnection implements Runnable {
                             Server.logger.info("Аутентификация не пройдена");
                         }
                     } else {
-                        sendObjectInNewThread(server.getRequestProcessor().getCommandWrapper().mapOfCommandsToSend());
+                        sendObjectInNewThread(server.getCommandWrapper().mapOfCommandsToSend());
                         Server.logger.info("Список доступных команд отправлен клиенту");
                         technicalInteraction = false;
                     }
 
                 } else {
-                    serverResponse = server.getRequestProcessor().processRequest(clientRequest);
+                    serverResponse = processRequestInNewThread(clientRequest, false);
                 }
 
                 if (clientRequest.getCommand().equals("exit")) {
                     Server.logger.info(serverResponse.getResponseToPrint());
-                    server.getRequestProcessor().getCommandWrapper().getAllInnerCommands().get("save").execute("", null, null);
+                    //server.getRequestProcessor().getCommandWrapper().getAllInnerCommands().get("save").execute("", null, null);
                 } else {
                     if (!clientRequest.getCommand().equals("send_available_commands")) {
                         sendObjectInNewThread(serverResponse);
@@ -91,6 +84,14 @@ public class ClientConnection implements Runnable {
             }
         }
 
+    }
+
+    public ServerResponse processRequestInNewThread(ClientRequest clientRequest, boolean isTechnical) throws InterruptedException {
+        ResponseWrapper responseWrapper = new ResponseWrapper(clientRequest, server.getCommandWrapper(), isTechnical);
+        Thread requestProcessingThread = new Thread(responseWrapper);
+        requestProcessingThread.start();
+        requestProcessingThread.join();
+        return responseWrapper.getComputedResponse();
     }
 
 

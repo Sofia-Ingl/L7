@@ -1,16 +1,15 @@
-2021-05-20 21:13:45,201 INFO [main] [DatabaseManager.java:34] Соединение с базой данных установлено
-2021-05-20 21:13:45,311 INFO [main] [Server.java:60] Сервер запускается...
-2021-05-20 21:13:45,312 INFO [main] [Server.java:100] Фабрика сокетов создана
-2021-05-20 21:13:45,316 INFO [main] [Server.java:112] Прослушивается порт 3132
-2021-05-20 21:13:48,137 INFO [main] [Server.java:114] Соединение с клиентом, находящимся по адресу /127.0.0.1:55465, установлено
-2021-05-20 21:13:48,143 INFO [main] [Server.java:112] Прослушивается порт 3132
-2021-05-20 21:13:58,077 INFO [pool-1-thread-1] [ClientConnection.java:54] Аутентификация пользователя прошла успешно
-2021-05-20 21:13:58,085 INFO [pool-1-thread-1] [ClientConnection.java:60] Список доступных команд отправлен клиенту
-2021-05-20 21:14:01,714 INFO [pool-1-thread-1] [RequestProcessor.java:29] Исполняется команда show
-2021-05-20 21:14:07,135 INFO [pool-1-thread-1] [RequestProcessor.java:29] Исполняется команда help
-2021-05-20 21:14:16,224 INFO [pool-1-thread-1] [RequestProcessor.java:29] Исполняется команда info
-2021-05-20 21:14:39,854 INFO [pool-1-thread-1] [RequestProcessor.java:29] Исполняется команда history
-2021-05-20 21:15:34,535 INFO [pool-1-thread-1] [RequestProcessor.java:29] Исполняется команда add
-2021-05-20 21:15:36,992 INFO [pool-1-thread-1] [RequestProcessor.java:29] Исполняется команда show
-2021-05-20 21:15:47,460 WARN [pool-1-thread-1] [ClientConnection.java:82] Соединение разорвано
-2021-05-20 21:15:47,463 INFO [pool-1-thread-1] [ClientConnection.java:88] Клиент успешно отключается
+2021-05-20 23:33:17,427 INFO [main] [DatabaseManager.java:34] Соединение с базой данных установлено
+2021-05-20 23:33:17,612 INFO [main] [Server.java:60] Сервер запускается...
+2021-05-20 23:33:17,613 INFO [main] [Server.java:100] Фабрика сокетов создана
+2021-05-20 23:33:17,616 INFO [main] [Server.java:112] Прослушивается порт 3132
+2021-05-20 23:33:20,050 INFO [main] [Server.java:114] Соединение с клиентом, находящимся по адресу /127.0.0.1:53106, установлено
+2021-05-20 23:33:20,055 INFO [main] [Server.java:112] Прослушивается порт 3132
+2021-05-20 23:33:34,249 INFO [Thread-3] [CommandWrapper.java:70] Исполняется команда login
+2021-05-20 23:33:34,250 INFO [pool-1-thread-1] [ClientConnection.java:47] Аутентификация пользователя прошла успешно
+2021-05-20 23:33:34,258 INFO [Thread-5] [CommandWrapper.java:70] Исполняется команда send_available_commands
+2021-05-20 23:33:34,258 INFO [pool-1-thread-1] [ClientConnection.java:53] Список доступных команд отправлен клиенту
+2021-05-20 23:33:37,685 INFO [Thread-7] [CommandWrapper.java:70] Исполняется команда show
+2021-05-20 23:33:44,692 INFO [Thread-9] [CommandWrapper.java:70] Исполняется команда info
+2021-05-20 23:33:53,597 INFO [Thread-11] [CommandWrapper.java:70] Исполняется команда exit
+2021-05-20 23:33:53,598 INFO [pool-1-thread-1] [ClientConnection.java:62] Клиент завершил работу с помощью команды exit
+2021-05-20 23:33:53,601 INFO [pool-1-thread-1] [ClientConnection.java:81] Клиент успешно отключается

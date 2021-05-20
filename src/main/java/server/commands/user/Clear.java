@@ -9,7 +9,7 @@ import java.sql.SQLException;
 public class Clear extends UserCommand {
 
     public Clear() {
-        super("clear", "очистить коллекцию", false, false);
+        super("clear", "очистить коллекцию", false, false, true);
     }
 
     @Override

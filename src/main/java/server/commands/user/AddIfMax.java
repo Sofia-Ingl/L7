@@ -10,7 +10,7 @@ import java.sql.SQLException;
 public class AddIfMax extends UserCommand {
 
     public AddIfMax() {
-        super("add_if_max", "добавить новый элемент в коллекцию, если его значение превышает значение наибольшего элемента этой коллекции", true, false);
+        super("add_if_max", "добавить новый элемент в коллекцию, если его значение превышает значение наибольшего элемента этой коллекции", true, false, true);
     }
 
 

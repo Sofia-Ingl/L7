@@ -12,7 +12,7 @@ import java.sql.SQLException;
 public class RemoveGreater extends UserCommand {
 
     public RemoveGreater() {
-        super("remove_greater", "удалить из коллекции все элементы, превышающие заданный", true, false);
+        super("remove_greater", "удалить из коллекции все элементы, превышающие заданный", true, false, true);
     }
 
     @Override
