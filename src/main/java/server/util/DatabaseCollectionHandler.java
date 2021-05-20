@@ -352,22 +352,6 @@ public class DatabaseCollectionHandler {
 
             databaseManager.commit();
 
-            /*
-
-    public static final String UPDATE_MOVIE_BY_ID = "UPDATE " + DatabaseConstants.MOVIE_TABLE + " SET "
-            + DatabaseConstants.MOVIE_NAME_COLUMN_IN_MOVIES + " = ?, "
-            + DatabaseConstants.X_COORDINATE_COLUMN_IN_MOVIES + " = ?, "
-            + DatabaseConstants.Y_COORDINATE_COLUMN_IN_MOVIES + " = ?, "
-            + DatabaseConstants.OSCARS_COUNT_COLUMN_IN_MOVIES + " = ?, "
-            + DatabaseConstants.PALMS_COUNT_COLUMN_IN_MOVIES + " = ?, "
-            + DatabaseConstants.TAGLINE_COLUMN_IN_MOVIES + " = ?, "
-            + DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_MOVIES + " = ?, "
-            + DatabaseConstants.GENRE_COLUMN_IN_MOVIES + " = ?"
-            + " WHERE " + DatabaseConstants.MOVIE_ID_COLUMN_IN_MOVIES + " = ? AND "
-            + DatabaseConstants.USER_NAME_COLUMN_IN_MOVIES + " = ?";
-
-             */
-
         } catch (SQLException e) {
             Server.logger.warn("Ошибка при выполнении запросов на изменение фильма по id в бд!");
             databaseManager.rollback(savepoint);

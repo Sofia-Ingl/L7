@@ -19,11 +19,6 @@ public class ResponseWrapper implements Runnable {
     @Override
     public void run() {
         computedResponse = commandWrapper.processRequest(requestToProcess, isTechnical);
-//        if (isTechnical) {
-//            computedResponse = requestProcessor.processTechnicalRequests(requestToProcess);
-//        } else {
-//            computedResponse = requestProcessor.processRequest(requestToProcess);
-//        }
     }
 
     public ServerResponse getComputedResponse() {

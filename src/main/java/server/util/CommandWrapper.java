@@ -51,10 +51,6 @@ public class CommandWrapper {
         return allCommandsAvailable;
     }
 
-    public HashMap<String, InnerServerCommand> getAllInnerCommands() {
-        return allInnerCommands;
-    }
-
     public HashMap<String, Pair<String, Pair<Boolean, Boolean>>> mapOfCommandsToSend() {
         HashMap<String, Pair<String, Pair<Boolean, Boolean>>> mapToSend = new HashMap<>();
         UserCommand userCommand;

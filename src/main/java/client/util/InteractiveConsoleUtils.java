@@ -25,14 +25,6 @@ public abstract class InteractiveConsoleUtils {
         this.suppressMessages = suppressMessages;
     }
 
-    public InputStream getIn() {
-        return In;
-    }
-
-    public OutputStream getOut() {
-        return Out;
-    }
-
     public void setOut(OutputStream out) {
         Out = out;
     }

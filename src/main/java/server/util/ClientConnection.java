@@ -39,8 +39,6 @@ public class ClientConnection implements Runnable {
 
                     serverResponse = processRequestInNewThread(clientRequest, true);
 
-                    //serverResponse = server.getRequestProcessor().processTechnicalRequests(clientRequest);
-
                     if (!listOfCommandsToSend) {
                         if (serverResponse.getCode().equals(CommandExecutionCode.SUCCESS)) {
                             listOfCommandsToSend = true;
@@ -60,7 +58,6 @@ public class ClientConnection implements Runnable {
 
                 if (clientRequest.getCommand().equals("exit")) {
                     Server.logger.info(serverResponse.getResponseToPrint());
-                    //server.getRequestProcessor().getCommandWrapper().getAllInnerCommands().get("save").execute("", null, null);
                 } else {
                     if (!clientRequest.getCommand().equals("send_available_commands")) {
                         sendObjectInNewThread(serverResponse);

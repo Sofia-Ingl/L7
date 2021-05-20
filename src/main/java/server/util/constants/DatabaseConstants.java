@@ -33,34 +33,4 @@ public final class DatabaseConstants {
 
     private DatabaseConstants() {}
 
-    /*
-
-CREATE TABLE IF NOT EXISTS movieTest (
-  movieId INTEGER PRIMARY KEY CHECK(movieId > 0),
-  movieName TEXT NOT NULL,
-  xCoord FLOAT CHECK(xCoord <= 326),
-  yCoord INTEGER NOT NULL CHECK(yCoord <= 281),
-  oscarsCount INTEGER NOT NULL CHECK(oscarsCount > 0),
-  gPalmsCount BIGINT NOT NULL CHECK (gPalmsCount > 0),
-  tagline TEXT NOT NULL,
-  creationDate TIMESTAMP NOT NULL,
-  screenwriterId INTEGER REFERENCES scrTest(scrId),
-  genreName TEXT,
-  userName TEXT NOT NULL REFERENCES users(userName)
-);
-
-CREATE TABLE IF NOT EXISTS scrTest (
-  screenwriterId INTEGER PRIMARY KEY,
-  screenwriterName TEXT NOT NULL CHECK(scrName NOT LIKE ''),
-  height BIGINT NOT NULL CHECK(height>0),
-  eyeColor TEXT,
-  nation TEXT
-);
-
-CREATE TABLE IF NOT EXISTS users (
-  userName TEXT PRIMARY KEY,
-  hashPass TEXT NOT NULL
-);
-
-     */
 }

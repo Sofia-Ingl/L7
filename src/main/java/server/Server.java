@@ -22,7 +22,7 @@ public class Server implements Runnable {
 
     private final int port;
     private ServerSocket serverSocket;
-    private CommandWrapper commandWrapper;
+    private final CommandWrapper commandWrapper;
     private final ExecutorService fixedThreadPool = Executors.newFixedThreadPool(10);
 
 
@@ -41,7 +41,7 @@ public class Server implements Runnable {
                 new RemoveById(), new RemoveGreater(), new Update(), new Exit()};
 
         Server server = new Server(databaseAddrUserAndPort.getSecond(), new CommandWrapper(collectionStorage, databaseCollectionHandler, userHandler, userCommands, innerServerCommands));
-        addShutdownHook(server);
+        //addShutdownHook(server);
 
         server.run();
     }
@@ -72,7 +72,6 @@ public class Server implements Runnable {
 
             } catch (ConnectException e) {
                 logger.info(e.getMessage());
-                //requestProcessor.getCommandWrapper().getAllInnerCommands().get("save").execute("", null, null);
                 noServerExitCode = false;
             } catch (IllegalThreadStateException e) {
                 logger.info("Ошибка при запуске потока для обслуживания клиентского соединения");
@@ -155,14 +154,15 @@ public class Server implements Runnable {
     }
 
 
+    /*
     private static void addShutdownHook(Server server) {
         Runtime.getRuntime().addShutdownHook(
                 new Thread(() -> {
                     logger.info("Выполняются действия после сигнала о прекращении работы сервера");
-                    //server.getRequestProcessor().getCommandWrapper().getAllInnerCommands().get("save").execute("", null, null);
                 }
                 ));
     }
+     */
 
     public CommandWrapper getCommandWrapper() {
         return commandWrapper;

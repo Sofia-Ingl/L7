@@ -87,11 +87,10 @@ public final class QueryConstants {
             + " FROM " + DatabaseConstants.MOVIE_TABLE + " WHERE " + DatabaseConstants.MOVIE_ID_COLUMN_IN_MOVIES
             + " = ? AND " + DatabaseConstants.USER_NAME_COLUMN_IN_MOVIES + " = ?";
 
-/*
-DELETES
 
- */
-
+    /*
+    DELETES
+    */
     public static final String DELETE_MOVIES_BY_USER = "DELETE FROM " + DatabaseConstants.MOVIE_TABLE
             + " WHERE " + DatabaseConstants.USER_NAME_COLUMN_IN_MOVIES + " = ?";
 
@@ -100,11 +99,13 @@ DELETES
             + DatabaseConstants.MOVIE_TABLE + "." + DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_MOVIES + " = "
             + DatabaseConstants.SCREENWRITER_TABLE + "." + DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_SCREENWRITERS + ") = 0";
 
+    /*
     public static final String DELETE_MOVIES_BY_SCREENWRITER_NAME = "DELETE FROM " + DatabaseConstants.MOVIE_TABLE
             + " WHERE LOWER( SELECT " + DatabaseConstants.SCREENWRITER_NAME_COLUMN_IN_SCREENWRITERS + " FROM "
             + DatabaseConstants.SCREENWRITER_TABLE + " WHERE " + DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_SCREENWRITERS
             + " = " + DatabaseConstants.MOVIE_TABLE + "." + DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_MOVIES
             + " ) LIKE LOWER( ? )";
+     */
 
     public static final String DELETE_MOVIES_BY_SCREENWRITER_ID_AND_USER = "DELETE FROM " + DatabaseConstants.MOVIE_TABLE
             + " WHERE " + DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_MOVIES + " = ? AND "
@@ -117,7 +118,6 @@ DELETES
     /*
     UPDATES
      */
-
     public static final String UPDATE_MOVIE_BY_ID = "UPDATE " + DatabaseConstants.MOVIE_TABLE + " SET "
             + DatabaseConstants.MOVIE_NAME_COLUMN_IN_MOVIES + " = ?, "
             + DatabaseConstants.X_COORDINATE_COLUMN_IN_MOVIES + " = ?, "

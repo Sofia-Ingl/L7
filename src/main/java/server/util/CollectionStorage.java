@@ -168,12 +168,12 @@ public class CollectionStorage {
 
     }
 
-        public LinkedHashSet<Movie> getCollection() {
+    public LinkedHashSet<Movie> getCollection() {
         lastAccessTime = LocalDateTime.now();
         return collection;
     }
 
-        public Movie getMaxMovie() {
+    public Movie getMaxMovie() {
         return maxMovie;
     }
 
@@ -189,8 +189,8 @@ public class CollectionStorage {
         return updateTime;
     }
 
-        public Type[] getTypes() {
-        return new Type[]{collectionType, contentType};
+    public Type[] getTypes() {
+        return new Type[] {collectionType, contentType};
     }
 
 
