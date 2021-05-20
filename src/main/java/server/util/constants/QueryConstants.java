@@ -44,12 +44,52 @@ public final class QueryConstants {
     INSERTS
      */
     public static final String INSERT_SCREENWRITER = "INSERT INTO " + DatabaseConstants.SCREENWRITER_TABLE
+            + " (" + DatabaseConstants.SCREENWRITER_NAME_COLUMN_IN_SCREENWRITERS + ", "
+            + DatabaseConstants.HEIGHT_COLUMN_IN_SCREENWRITERS + ", "
+            + DatabaseConstants.EYE_COLOR_COLUMN_IN_SCREENWRITERS + ", "
+            + DatabaseConstants.NATION_COLUMN_IN_SCREENWRITERS + ") "
+            + "VALUES (?, ?, ?, ?)";
+
+    public static final String INSERT_MOVIE = "INSERT INTO " + DatabaseConstants.MOVIE_TABLE
+            + " (" + DatabaseConstants.MOVIE_NAME_COLUMN_IN_MOVIES + ", "
+            + DatabaseConstants.X_COORDINATE_COLUMN_IN_MOVIES + ", "
+            + DatabaseConstants.Y_COORDINATE_COLUMN_IN_MOVIES + ", "
+            + DatabaseConstants.CREATION_DATE_COLUMN_IN_MOVIES + ", "
+            + DatabaseConstants.CREATION_DATE_ZONE_COLUMN_IN_MOVIES + ", "
+            + DatabaseConstants.OSCARS_COUNT_COLUMN_IN_MOVIES + ", "
+            + DatabaseConstants.PALMS_COUNT_COLUMN_IN_MOVIES + ", "
+            + DatabaseConstants.TAGLINE_COLUMN_IN_MOVIES + ", "
+            + DatabaseConstants.GENRE_COLUMN_IN_MOVIES + ", "
+            + DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_MOVIES + ", "
+            + DatabaseConstants.USER_NAME_COLUMN_IN_MOVIES + ") "
+            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    /*
+     this.id = id;
+        this.name = name;
+        this.coordinates = coordinates;
+        this.creationDate = creationDate;
+        this.oscarsCount = oscars;
+        this.goldenPalmCount = palms;
+        this.tagline = tagline;
+        this.genre = genre;
+        this.screenwriter = screenwriter;
+        this.owner = user;
+     */
+    /*
+    public static final String INSERT_SCREENWRITER = "INSERT INTO " + DatabaseConstants.SCREENWRITER_TABLE
             + " VALUES (nextval('" + DatabaseConstants.SCREENWRITER_ID_SEQUENCE + "'), ?, ?, ?, ?)";
 
     public static final String INSERT_MOVIE = "INSERT INTO " + DatabaseConstants.MOVIE_TABLE
             + " VALUES (nextval('" + DatabaseConstants.MOVIE_ID_SEQUENCE + "'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
+*/
+
     public static final String INSERT_USER = "INSERT INTO " + DatabaseConstants.USER_TABLE + " VALUES (?, ?)";
+
+
+
+
 
     /*
     SELECTS

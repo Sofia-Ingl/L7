@@ -141,15 +141,6 @@ public class Movie implements Comparable<Movie>, Serializable {
         return result;
     }
 
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Movie)) return false;
-        Movie movie = (Movie) o;
-        return Objects.equals(getName(), movie.getName()) && Objects.equals(getScreenwriter().getName(), movie.getScreenwriter().getName());
-    }
-
     @Override
     public int hashCode() {
         return Objects.hash(getName());

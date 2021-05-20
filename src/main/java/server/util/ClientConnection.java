@@ -100,7 +100,7 @@ public class ClientConnection implements Runnable {
         Thread responseThread = new Thread(() -> {
             try {
                 socket.getOutputStream().write(Serialization.serialize(o));
-                Server.logger.info("Ответ успешно отправлен");
+                //Server.logger.info("Ответ успешно отправлен");
             } catch (IOException e) {
                 Server.logger.info("Ошибка соединения при отправке ответа клиенту");
             }

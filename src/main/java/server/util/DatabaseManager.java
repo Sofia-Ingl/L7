@@ -122,10 +122,10 @@ public class DatabaseManager {
         }
     }
 
-    public void rollback() {
+    public void rollback(Savepoint savepoint) {
         try {
             if (!connection.getAutoCommit()) {
-                connection.rollback();
+                connection.rollback(savepoint);
             }
         } catch (SQLException e) {
             Server.logger.warn("Ошибка при отмене изменений");
@@ -141,6 +141,15 @@ public class DatabaseManager {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public void commit() {
+        try {
+            connection.commit();
+        } catch (SQLException e) {
+            Server.logger.warn("Ошибка при утверждении изменений");
+            e.printStackTrace();
+        }
     }
 
 

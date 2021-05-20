@@ -7,9 +7,7 @@ import server.util.constants.QueryConstants;
 import shared.data.*;
 import shared.serializable.User;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.LinkedHashSet;
@@ -76,11 +74,13 @@ public class DatabaseCollectionHandler {
             getScreenwriterStatement.setInt(1, id);
             ResultSet resultSet = getScreenwriterStatement.executeQuery();
             if (resultSet.next()) {
+                String eyeColor = resultSet.getString(DatabaseConstants.EYE_COLOR_COLUMN_IN_SCREENWRITERS);
+                String nationality = resultSet.getString(DatabaseConstants.NATION_COLUMN_IN_SCREENWRITERS);
                 screenwriter = new Person(
                         resultSet.getString(DatabaseConstants.SCREENWRITER_NAME_COLUMN_IN_SCREENWRITERS),
                         resultSet.getLong(DatabaseConstants.HEIGHT_COLUMN_IN_SCREENWRITERS),
-                        Color.valueOf(resultSet.getString(DatabaseConstants.EYE_COLOR_COLUMN_IN_SCREENWRITERS)),
-                        Country.valueOf(resultSet.getString(DatabaseConstants.NATION_COLUMN_IN_SCREENWRITERS))
+                        (eyeColor == null) ? null : Color.valueOf(eyeColor),
+                        (nationality == null) ? null : Country.valueOf(nationality)
                 );
             }
         } catch (SQLException e) {
@@ -90,6 +90,101 @@ public class DatabaseCollectionHandler {
             if (getScreenwriterStatement != null) databaseManager.closeStatement(getScreenwriterStatement);
         }
         return screenwriter;
+    }
+
+    public Movie addNewMovie(Movie movie, User owner) throws SQLException {
+
+        PreparedStatement insertMovieStatement;
+        PreparedStatement insertScreenwriterStatement;
+
+        Savepoint savepoint = databaseManager.setSavepoint();
+        databaseManager.setRegulatedCommit();
+
+        insertScreenwriterStatement = databaseManager.getPreparedStatement(QueryConstants.INSERT_SCREENWRITER, true);
+        insertMovieStatement = databaseManager.getPreparedStatement(QueryConstants.INSERT_MOVIE, true);
+
+        try {
+
+            Person screenwriter = movie.getScreenwriter();
+
+            insertScreenwriterStatement.setString(1, screenwriter.getName());
+            insertScreenwriterStatement.setLong(2, screenwriter.getHeight());
+            if (screenwriter.getEyeColor() != null) {
+                insertScreenwriterStatement.setString(3, screenwriter.getEyeColor().toString());
+            } else {
+                insertScreenwriterStatement.setNull(3, Types.LONGVARCHAR);
+            }
+            if (screenwriter.getNationality() != null) {
+                insertScreenwriterStatement.setString(4, screenwriter.getNationality().toString());
+            } else {
+                insertScreenwriterStatement.setNull(4, Types.LONGVARCHAR);
+            }
+
+            if (insertScreenwriterStatement.executeUpdate() == 0) throw new SQLException();
+            ResultSet generatedScreenwriterKeys = insertScreenwriterStatement.getGeneratedKeys();
+
+            int screenwriterId = -1;
+            if (generatedScreenwriterKeys.next()) {
+                screenwriterId = generatedScreenwriterKeys.getInt(1);
+            } else throw new SQLException();
+
+            ZonedDateTime creationDate = ZonedDateTime.now();
+            Coordinates coordinates = movie.getCoordinates();
+
+            insertMovieStatement.setString(1, movie.getName());
+            insertMovieStatement.setFloat(2, coordinates.getX());
+            insertMovieStatement.setInt(3, coordinates.getY());
+            insertMovieStatement.setTimestamp(4, Timestamp.valueOf(creationDate.toLocalDateTime()));
+            insertMovieStatement.setString(5, creationDate.getZone().toString());
+            insertMovieStatement.setInt(6, movie.getOscarsCount());
+            insertMovieStatement.setLong(7, movie.getGoldenPalmCount());
+            insertMovieStatement.setString(8, movie.getTagline());
+            insertMovieStatement.setString(9, movie.getGenre().toString());
+            insertMovieStatement.setInt(10, screenwriterId);
+            if (!userHandler.findUserByNameAndPass(owner)) throw new SQLException();
+            insertMovieStatement.setString(11, owner.getLogin());
+
+            if (insertMovieStatement.executeUpdate() == 0) throw new SQLException();
+            ResultSet preparedMovieKeys = insertMovieStatement.getGeneratedKeys();
+            int movieId = -1;
+            if (preparedMovieKeys.next()) {
+                movieId = preparedMovieKeys.getInt(1);
+            } else throw new SQLException();
+
+            movie.setCreationDate(creationDate);
+            movie.setId(movieId);
+
+            databaseManager.commit();
+            return movie;
+
+            /*
+        public static final String INSERT_MOVIE = "INSERT INTO " + DatabaseConstants.MOVIE_TABLE
+            + " (" + DatabaseConstants.MOVIE_NAME_COLUMN_IN_MOVIES + ", "
+            + DatabaseConstants.X_COORDINATE_COLUMN_IN_MOVIES + ", "
+            + DatabaseConstants.Y_COORDINATE_COLUMN_IN_MOVIES + ", "
+            + DatabaseConstants.CREATION_DATE_COLUMN_IN_MOVIES + ", "
+            + DatabaseConstants.CREATION_DATE_ZONE_COLUMN_IN_MOVIES + ", "
+            + DatabaseConstants.OSCARS_COUNT_COLUMN_IN_MOVIES + ", "
+            + DatabaseConstants.PALMS_COUNT_COLUMN_IN_MOVIES + ", "
+            + DatabaseConstants.TAGLINE_COLUMN_IN_MOVIES + ", "
+            + DatabaseConstants.GENRE_COLUMN_IN_MOVIES + ", "
+            + DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_MOVIES + ", "
+            + DatabaseConstants.USER_NAME_COLUMN_IN_MOVIES + ") "
+            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+     */
+
+
+        } catch (SQLException e) {
+            Server.logger.warn("Ошибка при выполнении запросов на добавление нового объекта в бд!");
+            databaseManager.rollback(savepoint);
+            throw e;
+        } finally {
+            databaseManager.closeStatement(insertMovieStatement);
+            databaseManager.closeStatement(insertScreenwriterStatement);
+            databaseManager.setAutoCommit();
+        }
+
     }
 
     public UserHandler getUserHandler() {

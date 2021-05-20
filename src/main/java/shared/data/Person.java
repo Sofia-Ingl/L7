@@ -35,6 +35,14 @@ public class Person implements Serializable {
         return height;
     }
 
+    public Color getEyeColor() {
+        return eyeColor;
+    }
+
+    public Country getNationality() {
+        return nationality;
+    }
+
     @Override
     public String toString() {
         return "Person{" +
