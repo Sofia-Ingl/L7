@@ -109,23 +109,62 @@ public class CollectionStorage {
 
     public boolean removeByScreenwriter(String screenwriterName, User user) {
 
-        final String screenwriter = screenwriterName.trim().toLowerCase();
+        String screenwriter = screenwriterName.trim().toLowerCase();
         int collectionSize = collection.size();
 
         collection = collection
                 .stream()
                 .filter(m -> !(m.getScreenwriter().getName().trim().toLowerCase().equals(screenwriter) && m.getOwner().getLogin().equals(user.getLogin())))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
-        detectMaxMovie();
 
         lastAccessTime = LocalDateTime.now();
         if (collectionSize > collection.size()) {
+            detectMaxMovie();
             updateTime = lastAccessTime;
             return true;
         }
 
         return false;
     }
+
+    public boolean deleteElementForId(int id, User user) {
+
+        int collectionSize = collection.size();
+
+        collection = collection
+                    .stream()
+                    .filter(movie -> !(movie.getId() == id && movie.getOwner().getLogin().equals(user.getLogin())))
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        lastAccessTime = LocalDateTime.now();
+        if (collectionSize > collection.size()) {
+            detectMaxMovie();
+            updateTime = lastAccessTime;
+            return true;
+        }
+
+        return false;
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     public void loadCollection(String fullPath) {

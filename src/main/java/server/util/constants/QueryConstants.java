@@ -108,9 +108,10 @@ DELETES
             + " WHERE " + DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_MOVIES + " = ? AND "
             + DatabaseConstants.USER_NAME_COLUMN_IN_MOVIES + " = ?";
 
-    /*
-    DELETE FROM b WHERE (SELECT aaa FROM aa WHERE bb = b.hom) = 1
-     */
-    private QueryConstants() {
-    }
+    public static final String DELETE_MOVIES_BY_ID_AND_USER = "DELETE FROM " + DatabaseConstants.MOVIE_TABLE
+            + " WHERE " + DatabaseConstants.MOVIE_ID_COLUMN_IN_MOVIES + " = ? AND "
+            + DatabaseConstants.USER_NAME_COLUMN_IN_MOVIES + " = ?";
+
+
+    private QueryConstants() {}
 }

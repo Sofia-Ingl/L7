@@ -4,6 +4,8 @@ import server.commands.abstracts.UserCommand;
 import shared.serializable.Pair;
 import shared.serializable.User;
 
+import java.sql.SQLException;
+
 /**
  * Команда, удаляющая элементы по айди.
  */
@@ -23,13 +25,11 @@ public class RemoveById extends UserCommand {
             }
 
             int id = Integer.parseInt(arg.trim());
-            boolean wasInCollection;
-            synchronized (getCollectionStorage()) {
-                wasInCollection = getCollectionStorage().streamDeleteElementForId(id);
-            }
+            getDatabaseCollectionHandler().deleteMovieById(id, user);
+            boolean wasInCollection = getCollectionStorage().deleteElementForId(id, user);
 
             if (!wasInCollection) {
-                response = "Нет элемента с таким значением id!";
+                response = "Среди принадлежащих пользователю элементов нет фильма с таким значением id!";
             } else {
                 response = "Элемент успешно удален";
             }
@@ -40,6 +40,8 @@ public class RemoveById extends UserCommand {
             response = "Неправильно введен аргумент!";
         } catch (IllegalArgumentException e) {
             response = e.getMessage();
+        } catch (SQLException e) {
+            response = "Ошибка при взаимодействии с базой данных";
         }
         return new Pair<>(false, response);
     }

@@ -239,6 +239,22 @@ public class DatabaseCollectionHandler {
             databaseManager.closeStatement(deleteScreenwritersStatement);
             databaseManager.setAutoCommit();
         }
+    }
 
+    public void deleteMovieById(int id, User user) throws SQLException {
+
+        PreparedStatement deleteMovieByIdStatement = databaseManager.getPreparedStatement(QueryConstants.DELETE_MOVIES_BY_ID_AND_USER, false);
+
+        try {
+            deleteMovieByIdStatement.setInt(1, id);
+            deleteMovieByIdStatement.setString(2, user.getLogin());
+            deleteMovieByIdStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            Server.logger.warn("Ошибка при удалении фильма по id из бд!");
+            throw e;
+        } finally {
+            databaseManager.closeStatement(deleteMovieByIdStatement);
+        }
     }
 }
