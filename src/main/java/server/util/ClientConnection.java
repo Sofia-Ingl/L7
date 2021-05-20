@@ -24,6 +24,9 @@ public class ClientConnection implements Runnable {
 
         ClientRequest clientRequest;
         ServerResponse serverResponse;
+        ResponseWrapper responseWrapper;
+        Thread requestProcessingThread;
+
         boolean technicalInteraction = true;
         boolean listOfCommandsToSend = false;
 
@@ -36,7 +39,15 @@ public class ClientConnection implements Runnable {
                 clientRequest = (ClientRequest) Serialization.deserialize(b);
                 if (technicalInteraction) {
 
-                    serverResponse = server.getRequestProcessor().processTechnicalRequests(clientRequest);
+                    responseWrapper = new ResponseWrapper(clientRequest, server.getRequestProcessor(), true);
+                    requestProcessingThread = new Thread(responseWrapper);
+                    requestProcessingThread.start();
+                    requestProcessingThread.join();
+
+                    serverResponse = responseWrapper.getComputedResponse();
+
+                    //serverResponse = server.getRequestProcessor().processTechnicalRequests(clientRequest);
+
                     if (!listOfCommandsToSend) {
                         if (serverResponse.getCode().equals(CommandExecutionCode.SUCCESS)) {
                             listOfCommandsToSend = true;
@@ -66,9 +77,11 @@ public class ClientConnection implements Runnable {
             } while (serverResponse.getCode() != CommandExecutionCode.EXIT);
 
         } catch (ClassNotFoundException e) {
-            Server.logger.warn("Ошика при чтении данных");
+            Server.logger.warn("Ошибка при чтении данных");
         } catch (IOException e) {
             Server.logger.warn("Соединение разорвано");
+        } catch (InterruptedException e) {
+            Server.logger.warn("Ошибка многопоточности при обслуживании клиентского соединения");
         } finally {
             try {
                 socket.close();

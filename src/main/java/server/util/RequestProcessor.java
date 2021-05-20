@@ -23,20 +23,6 @@ public class RequestProcessor {
         return new ServerResponse(code, commandResult.getSecond());
     }
 
-    /*
-    public ServerResponse processAuthentication(ClientRequest request) {
-        Server.logger.info("Попытка аутентификации пользователя...");
-        InnerServerCommand innerServerCommand = commandWrapper.getAllInnerCommands().get(request.getCommand());
-        Pair<Boolean, String> commandResult = innerServerCommand.execute(request.getCommandArgument(), request.getCreatedObject());
-        CommandExecutionCode code = commandResult.getFirst() ? CommandExecutionCode.SUCCESS : CommandExecutionCode.ERROR;
-        if (commandResult.getFirst()) {
-            Server.logger.info("Аутентификация успешно пройдена!");
-        } else {
-            Server.logger.info("Пользователь не прошел аутентификацию");
-        }
-        return new ServerResponse(code, commandResult.getSecond());
-    }
-     */
 
     public ServerResponse processRequest(ClientRequest request) {
 

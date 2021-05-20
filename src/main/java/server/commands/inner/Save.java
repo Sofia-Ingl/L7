@@ -1,8 +1,6 @@
 package server.commands.inner;
 
-import server.Server;
 import server.commands.abstracts.InnerServerCommand;
-import server.util.FileHelper;
 import shared.serializable.Pair;
 import shared.serializable.User;
 

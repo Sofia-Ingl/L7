@@ -11,14 +11,9 @@ import server.commands.inner.SendCommands;
 import server.commands.user.*;
 import server.util.*;
 import shared.serializable.Pair;
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
-
-import java.io.Console;
 import java.io.IOException;
 import java.net.*;
 import java.nio.channels.IllegalBlockingModeException;
-import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -41,8 +36,6 @@ public class Server implements Runnable {
         CollectionStorage collectionStorage = new CollectionStorage(databaseCollectionHandler);
         collectionStorage.loadCollectionFromDatabase();
 
-        //CollectionStorage collectionStorage = new CollectionStorage();
-        //collectionStorage.loadCollection(databaseAddrAndPort.getFirst());
         InnerServerCommand[] innerServerCommands = {new Save(), new Login(), new Register(), new SendCommands()};
         UserCommand[] userCommands = {new Help(), new History(), new Clear(), new Add(), new Show(), new ExecuteScript(),
                 new GoldenPalmsFilter(), new Info(), new AddIfMax(), new PrintAscending(), new RemoveAllByScreenwriter(),
@@ -77,11 +70,7 @@ public class Server implements Runnable {
 
                 Socket socket = establishClientConnection();
 
-                //fixedThreadPool.execute(new ClientConnection(this, socket));
                 fixedThreadPool.submit(new ClientConnection(this, socket));
-
-//                Thread clientConnection = new Thread(new ClientConnection(this, socket));
-//                clientConnection.start();
 
             } catch (ConnectException e) {
                 logger.info(e.getMessage());
@@ -130,38 +119,6 @@ public class Server implements Runnable {
     }
 
 
-/*
-    private void handleRequests(Socket socket) {
-
-        ClientRequest clientRequest;
-        ServerResponse serverResponse;
-
-        try {
-
-            do {
-
-                byte[] b = new byte[66666];
-                socket.getInputStream().read(b);
-                clientRequest = (ClientRequest) Serialization.deserialize(b);
-                serverResponse = requestProcessor.processRequest(clientRequest);
-                if (clientRequest.getCommand().equals("exit")) {
-                    logger.info(serverResponse.getResponseToPrint());
-                    requestProcessor.getCommandWrapper().getAllInnerCommands().get("save").execute("", null);
-                } else {
-                    socket.getOutputStream().write(Serialization.serialize(serverResponse));
-                }
-
-
-            } while (serverResponse.getCode() != CommandExecutionCode.EXIT);
-
-        } catch (IOException | ClassNotFoundException e) {
-
-            logger.warn("Соединение разорвано");
-        }
-
-    }
-*/
-
     private static Pair<String[], Integer> processArguments(String[] args) {
         try {
 
@@ -193,23 +150,6 @@ public class Server implements Runnable {
         }
         return new Pair<>(new String[] {"", "", ""}, 8234);
     }
-
-    /*
-    private static String readDatabasePass() {
-        System.out.println("Введите пароль от учетной записи в бд:");
-        System.out.print(">");
-
-        Console console = System.console();
-        if (console != null) {
-            return String.valueOf(console.readPassword()).trim();
-        } else {
-            Scanner scanner = new Scanner(System.in);
-            if (scanner.hasNext()) return scanner.nextLine().trim();
-        }
-        return "";
-    }
-
-     */
 
     private static void emergencyExit() {
         logger.error("Осуществляется аварийный выход из сервера");

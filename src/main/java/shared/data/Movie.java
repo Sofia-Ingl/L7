@@ -159,13 +159,14 @@ public class Movie implements Comparable<Movie>, Serializable {
         return "Movie{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", coordinates={" + coordinates.getX() + ", " + coordinates.getY() + "}" +
+                ", coordinates=" + coordinates.toString() +
                 ", creationDate=" + creationDate +
                 ", oscarsCount=" + oscarsCount +
                 ", goldenPalmCount=" + goldenPalmCount +
                 ", tagline='" + tagline + '\'' +
                 ", genre=" + genre +
                 ", screenwriter=" + screenwriter +
+                ", owner=" + owner.getLogin() +
                 '}';
     }
 }
