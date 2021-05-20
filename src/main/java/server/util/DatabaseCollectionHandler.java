@@ -10,12 +10,13 @@ import shared.serializable.User;
 import java.sql.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
 public class DatabaseCollectionHandler {
 
-    private DatabaseManager databaseManager;
-    private UserHandler userHandler;
+    private final DatabaseManager databaseManager;
+    private final UserHandler userHandler;
 
     public DatabaseCollectionHandler(DatabaseManager databaseManager, UserHandler userHandler) {
         this.databaseManager = databaseManager;
@@ -192,6 +193,48 @@ public class DatabaseCollectionHandler {
             databaseManager.rollback(savepoint);
             throw e;
         } finally {
+            databaseManager.closeStatement(deleteMoviesStatement);
+            databaseManager.closeStatement(deleteScreenwritersStatement);
+            databaseManager.setAutoCommit();
+        }
+
+    }
+
+    public void removeMoviesByScreenwriter(String screenwriterName, User user) throws SQLException {
+
+        PreparedStatement deleteMoviesStatement;
+        PreparedStatement selectScreenwriterIds;
+        PreparedStatement deleteScreenwritersStatement;
+
+        databaseManager.setRegulatedCommit();
+        Savepoint savepoint = databaseManager.setSavepoint();
+
+        selectScreenwriterIds = databaseManager.getPreparedStatement(QueryConstants.SELECT_SCREENWRITER_ID_BY_NAME, false);
+        deleteMoviesStatement = databaseManager.getPreparedStatement(QueryConstants.DELETE_MOVIES_BY_SCREENWRITER_ID_AND_USER, false);
+        deleteScreenwritersStatement = databaseManager.getPreparedStatement(QueryConstants.DELETE_SCREENWRITERS_WHICH_ARE_NOT_USED, false);
+
+        try {
+
+            selectScreenwriterIds.setString(1, screenwriterName);
+            ResultSet resultSet = selectScreenwriterIds.executeQuery();
+            int screenwriterId;
+
+            while (resultSet.next()) {
+                screenwriterId = resultSet.getInt(DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_SCREENWRITERS);
+                deleteMoviesStatement.setInt(1, screenwriterId);
+                deleteMoviesStatement.setString(2, user.getLogin());
+                deleteMoviesStatement.executeUpdate();
+            }
+
+            deleteScreenwritersStatement.executeUpdate();
+
+
+        } catch (SQLException e) {
+            Server.logger.warn("Ошибка при выполнении запросов на удаление фильмов по сценаристу из бд!");
+            databaseManager.rollback(savepoint);
+            throw e;
+        } finally {
+            databaseManager.closeStatement(selectScreenwriterIds);
             databaseManager.closeStatement(deleteMoviesStatement);
             databaseManager.closeStatement(deleteScreenwritersStatement);
             databaseManager.setAutoCommit();

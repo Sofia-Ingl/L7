@@ -18,15 +18,14 @@ public class History extends UserCommand {
     public Pair<Boolean, String> execute(String arg, Object obj, User user) {
 
         StringBuilder builder = new StringBuilder();
-        synchronized (getCommandWrapper().getHistory()) {
-            ArrayList<Command> history = getCommandWrapper().getHistory();
-            if (history.size() == 0) {
-                builder.append("История команд пуста.");
-            } else {
-                builder.append("\nИСТОРИЯ (ПОСЛЕДНИЕ 6 ВЫПОЛНЕННЫХ СЕРВЕРОМ КОМАНД, ОТ НОВЫХ К СТАРЫМ)\n");
-                for (int index = 0; index < history.size(); index++) {
-                    builder.append(history.get(history.size() - 1 - index).getName()).append("\n");
-                }
+
+        ArrayList<Command> history = getCommandWrapper().getHistory();
+        if (history.size() == 0) {
+            builder.append("История команд пуста.");
+        } else {
+            builder.append("\nИСТОРИЯ (ПОСЛЕДНИЕ 6 ВЫПОЛНЕННЫХ СЕРВЕРОМ КОМАНД, ОТ НОВЫХ К СТАРЫМ)\n");
+            for (int index = 0; index < history.size(); index++) {
+                builder.append(history.get(history.size() - 1 - index).getName()).append("\n");
             }
         }
 

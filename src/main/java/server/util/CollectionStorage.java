@@ -19,10 +19,9 @@ import java.util.stream.Collectors;
  */
 public class CollectionStorage {
 
-    private DatabaseCollectionHandler databaseCollectionHandler;
+    private final DatabaseCollectionHandler databaseCollectionHandler;
     private LinkedHashSet<Movie> collection = null;
 
-    private String path = null;
     private final Type collectionType = LinkedHashSet.class;
     private final Type contentType = Movie.class;
 
@@ -70,6 +69,8 @@ public class CollectionStorage {
         if (maxMovie.getOwner().getLogin().equals(username)) {
             detectMaxMovie();
         }
+        updateTime = LocalDateTime.now();
+        lastAccessTime = updateTime;
     }
 
     public void detectMaxMovie() {
@@ -77,16 +78,58 @@ public class CollectionStorage {
     }
 
 
-    public CollectionStorage() {
+    public String returnGreaterThanGoldenPalms(long goldenPalms) {
+
+        lastAccessTime = LocalDateTime.now();
+        StringBuilder builder = new StringBuilder();
+        String heading = "Элементы, значение поля goldenPalmsCount у которых больше заданного\n";
+        builder.append(heading);
+        collection.stream()
+                .filter(movie -> movie.getGoldenPalmCount() > goldenPalms)
+                .forEach(movie -> builder.append(movie).append("\n"));
+        if (builder.toString().equals(heading)) {
+            return "В коллекции не было элементов, удовлетворяющих условию";
+        }
+        return builder.toString();
     }
 
-    public String getPath() {
-        return path;
+
+    public Pair<String, ArrayList<Movie>> getSortedCollection() {
+        if (sortedCollection != null && sortedCollectionUpdateTime.isAfter(updateTime)) {
+            return new Pair<>("Коллекция не обновлялась со времен последней сортировки", sortedCollection);
+        } else {
+            ArrayList<Movie> sortedCollection = new ArrayList<>(collection);
+            lastAccessTime = LocalDateTime.now();
+            sortedCollection.sort(Comparator.naturalOrder());
+            this.sortedCollection = sortedCollection;
+            sortedCollectionUpdateTime = LocalDateTime.now();
+        }
+        return new Pair<>("Коллекция обновилась со времен последней сортировки!", sortedCollection);
     }
+
+    public boolean removeByScreenwriter(String screenwriterName, User user) {
+
+        final String screenwriter = screenwriterName.trim().toLowerCase();
+        int collectionSize = collection.size();
+
+        collection = collection
+                .stream()
+                .filter(m -> !(m.getScreenwriter().getName().trim().toLowerCase().equals(screenwriter) && m.getOwner().getLogin().equals(user.getLogin())))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+        detectMaxMovie();
+
+        lastAccessTime = LocalDateTime.now();
+        if (collectionSize > collection.size()) {
+            updateTime = lastAccessTime;
+            return true;
+        }
+
+        return false;
+    }
+
 
     public void loadCollection(String fullPath) {
         try {
-            path = fullPath;
             collection = FileHelper.jsonFileInputLoader(fullPath);
             for (Movie movie : collection) {
                 if (movie.getName() == null || movie.getName().trim().equals("") || movie.getGoldenPalmCount() <= 0 ||
@@ -296,22 +339,6 @@ public class CollectionStorage {
     }
 
 
-    public String streamReturnGreaterThanGoldenPalms(long goldenPalms) {
-
-        lastAccessTime = LocalDateTime.now();
-        StringBuilder builder = new StringBuilder();
-        String heading = "Элементы, значение поля goldenPalmsCount у которых больше заданного\n";
-        builder.append(heading);
-        collection.stream()
-                .filter(movie -> movie.getGoldenPalmCount() > goldenPalms)
-                .forEach(movie -> builder.append(movie).append("\n"));
-        if (builder.toString().equals(heading)) {
-            return "В коллекции не было элементов, удовлетворяющих условию";
-        }
-        return builder.toString();
-    }
-
-
     /**
      * Метод, удаляющий элементы большие, чем заданный.
      *
@@ -334,17 +361,5 @@ public class CollectionStorage {
         return false;
     }
 
-    public Pair<String, ArrayList<Movie>> getSortedCollection() {
-        if (sortedCollection != null && sortedCollectionUpdateTime.isAfter(updateTime)) {
-            return new Pair<>("Коллекция не обновлялась со времен последней сортировки", sortedCollection);
-        } else {
-            ArrayList<Movie> sortedCollection = new ArrayList<>(collection);
-            lastAccessTime = LocalDateTime.now();
-            sortedCollection.sort(Comparator.naturalOrder());
-            this.sortedCollection = sortedCollection;
-            sortedCollectionUpdateTime = LocalDateTime.now();
-        }
-        return new Pair<>("Коллекция обновилась со времен последней сортировки!", sortedCollection);
-    }
 
 }

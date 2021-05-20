@@ -16,31 +16,18 @@ public class Help extends UserCommand {
     @Override
     public Pair<Boolean, String> execute(String arg, Object obj, User user) {
 
-        String errorString;
 
-        try {
-            if (!arg.isEmpty()) {
-                throw new IllegalArgumentException("Неверное число аргументов при использовании команды " + this.getName());
+        if (commandInfo == null) {
+
+            StringBuilder help = new StringBuilder("\n" + "ИНФОРМАЦИЯ О ДОСТУПНЫХ КОМАНДАХ" + "\n");
+
+            for (UserCommand userCommand : getCommandWrapper().getAllCommandsAvailable().values()) {
+                help.append(userCommand.getName()).append(" ~> ").append(userCommand.getUtility()).append("\n");
             }
-            if (commandInfo == null) {
 
-                StringBuilder help = new StringBuilder("\n" + "ИНФОРМАЦИЯ О ДОСТУПНЫХ КОМАНДАХ" + "\n");
-
-                synchronized (getCommandWrapper().getAllCommandsAvailable()) {
-
-                    for (UserCommand userCommand : getCommandWrapper().getAllCommandsAvailable().values()) {
-                        help.append(userCommand.getName()).append(" ~> ").append(userCommand.getUtility()).append("\n");
-                    }
-
-                }
-                commandInfo = help.toString();
-            }
-            return new Pair<>(true, commandInfo);
-
-        } catch (IllegalArgumentException e) {
-            errorString = e.getMessage();
+            commandInfo = help.toString();
         }
+        return new Pair<>(true, commandInfo);
 
-        return new Pair<>(false, errorString);
     }
 }

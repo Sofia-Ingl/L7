@@ -4,9 +4,8 @@ import server.commands.abstracts.UserCommand;
 import shared.serializable.Pair;
 import shared.serializable.User;
 
-/**
- * Команда, удаляющая элементы по сценаристу.
- */
+import java.sql.SQLException;
+
 public class RemoveAllByScreenwriter extends UserCommand {
 
     public RemoveAllByScreenwriter() {
@@ -18,16 +17,19 @@ public class RemoveAllByScreenwriter extends UserCommand {
 
         String response;
         boolean isDeleted;
-        synchronized (getCollectionStorage()) {
-            isDeleted = getCollectionStorage().streamRemoveByScreenwriter(arg.trim());
-        }
-        if (!isDeleted) {
-            response = "В коллекции не было фильмов сценариста с подобным именем.";
-        } else {
-            response = "Фильмы заданного сценариста успешно удалены";
-        }
+        try {
+            getDatabaseCollectionHandler().removeMoviesByScreenwriter(arg.trim(), user);
+            isDeleted = getCollectionStorage().removeByScreenwriter(arg.trim(), user);
 
-        return new Pair<>(true, response);
-
+            if (!isDeleted) {
+                response = "В коллекции не было фильмов сценариста с подобным именем, принадлежащих пользователю";
+            } else {
+                response = "Фильмы заданного сценариста, принадлежащие пользователю, успешно удалены";
+            }
+            return new Pair<>(true, response);
+        } catch (SQLException e) {
+            response = "Ошибка при удалении элементов из базы данных";
+        }
+        return new Pair<>(false, response);
     }
 }

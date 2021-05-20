@@ -7,7 +7,7 @@ import shared.serializable.User;
 public class GoldenPalmsFilter extends UserCommand {
 
     public GoldenPalmsFilter() {
-        super("filter_greater_than_golden_palm_count","вывести элементы, значение поля goldenPalmCount которых больше заданного", false, true);
+        super("filter_greater_than_golden_palm_count", "вывести элементы, значение поля goldenPalmCount которых больше заданного", false, true);
     }
 
     @Override
@@ -24,10 +24,8 @@ public class GoldenPalmsFilter extends UserCommand {
             } else {
                 long goldenPalms = Long.parseLong(arg.trim());
 
-                String result;
-                synchronized (getCollectionStorage()) {
-                    result = getCollectionStorage().streamReturnGreaterThanGoldenPalms(goldenPalms);
-                }
+                String result = getCollectionStorage().returnGreaterThanGoldenPalms(goldenPalms);
+
                 return new Pair<>(true, result);
 
             }
@@ -36,8 +34,6 @@ public class GoldenPalmsFilter extends UserCommand {
             errorString = "Неправильно введен аргумент!";
         } catch (IllegalArgumentException e) {
             errorString = e.getMessage();
-        } catch (NullPointerException e) {
-            errorString = "Команда не привязана к хранилищу коллекции!";
         }
         return new Pair<>(false, errorString);
     }
