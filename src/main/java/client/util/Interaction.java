@@ -3,6 +3,7 @@ package client.util;
 import shared.data.Movie;
 import shared.serializable.ClientRequest;
 import shared.serializable.Pair;
+import shared.serializable.User;
 import shared.util.CommandExecutionCode;
 
 import java.io.EOFException;
@@ -16,6 +17,8 @@ import java.util.Scanner;
 import java.util.Stack;
 
 public class Interaction extends InteractiveConsoleUtils {
+
+    private User user = null;
 
     private final Scanner defaultScanner;
     private final UserElementGetter userElementGetter;
@@ -41,6 +44,7 @@ public class Interaction extends InteractiveConsoleUtils {
         this.userElementGetter.setOut(out);
         this.userElementGetter.setScanner(defaultScanner);
     }
+
 
     public ClientRequest formRequest(CommandExecutionCode code) {
 
@@ -68,6 +72,7 @@ public class Interaction extends InteractiveConsoleUtils {
             try {
                 if (commandsAvailable.get(command).getSecond().getFirst()) {
                     movie = userElementGetter.movieGetter();
+                    movie.setOwner(user);
                 }
             } catch (EOFException e) {
                 System.exit(1);
@@ -112,6 +117,7 @@ public class Interaction extends InteractiveConsoleUtils {
             try {
                 if (commandsAvailable.get(command).getSecond().getFirst()) {
                     movie = userElementGetter.movieGetter();
+                    movie.setOwner(user);
                 }
             } catch (EOFException e) {
                 printlnMessage("Ошибка в скрипте");
@@ -133,7 +139,7 @@ public class Interaction extends InteractiveConsoleUtils {
 
         }
 
-        return new ClientRequest(command, commandArg, movie);
+        return new ClientRequest(command, commandArg, movie, user);
     }
 
     private boolean putScriptOnStack(String path) {
@@ -246,5 +252,13 @@ public class Interaction extends InteractiveConsoleUtils {
             printlnMessage("\nПоток ввода завершен, приложение будет закрыто");
             System.exit(0);
         }
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public User getUser() {
+        return user;
     }
 }

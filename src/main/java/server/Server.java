@@ -26,16 +26,16 @@ public class Server implements Runnable {
 
     public final static Logger logger = LoggerFactory.getLogger(Server.class);
 
-    private int port;
+    private final int port;
     private ServerSocket serverSocket;
     private final RequestProcessor requestProcessor;
-    private ExecutorService fixedThreadPool = Executors.newFixedThreadPool(10);
+    private final ExecutorService fixedThreadPool = Executors.newFixedThreadPool(10);
 
 
     public static void main(String[] args) {
 
-        Pair<Pair<String, String>, Integer> databaseAddrUserAndPort = processArguments(args);
-        DatabaseManager databaseManager = new DatabaseManager(databaseAddrUserAndPort.getFirst().getFirst(), databaseAddrUserAndPort.getFirst().getSecond(), readDatabasePass());
+        Pair<String[], Integer> databaseAddrUserAndPort = processArguments(args);
+        DatabaseManager databaseManager = new DatabaseManager(databaseAddrUserAndPort.getFirst()[0], databaseAddrUserAndPort.getFirst()[1], databaseAddrUserAndPort.getFirst()[2]);
         UserHandler userHandler = new UserHandler(databaseManager);
         DatabaseCollectionHandler databaseCollectionHandler = new DatabaseCollectionHandler(databaseManager, userHandler);
         CollectionStorage collectionStorage = new CollectionStorage(databaseCollectionHandler);
@@ -85,7 +85,7 @@ public class Server implements Runnable {
 
             } catch (ConnectException e) {
                 logger.info(e.getMessage());
-                requestProcessor.getCommandWrapper().getAllInnerCommands().get("save").execute("", null);
+                requestProcessor.getCommandWrapper().getAllInnerCommands().get("save").execute("", null, null);
                 noServerExitCode = false;
             } catch (IllegalThreadStateException e) {
                 logger.info("Ошибка при запуске потока для обслуживания клиентского соединения");
@@ -162,20 +162,21 @@ public class Server implements Runnable {
     }
 */
 
-    private static Pair<Pair<String, String>, Integer> processArguments(String[] args) {
+    private static Pair<String[], Integer> processArguments(String[] args) {
         try {
 
-            if (args.length == 4) {
+            if (args.length == 5) {
                 String databaseHost = args[0];
                 String databaseName = args[1];
                 String databaseUsername = args[2];
+                String userPass = args[3];
                 String databaseAddress = "jdbc:postgresql://" + databaseHost + ":5432/" + databaseName;
-                int port = Integer.parseInt(args[3]);
+                int port = Integer.parseInt(args[4]);
 
                 if (port <= 1024) {
                     throw new IllegalArgumentException("Указан недопустимый порт");
                 }
-                return new Pair<>(new Pair<>(databaseAddress, databaseUsername), port);
+                return new Pair<>(new String[] {databaseAddress, databaseUsername, userPass}, port);
 
             } else {
                 throw new IllegalArgumentException("При запуске jar некорректно указаны аргументы (правильный вариант: java -jar <имя jar> <хост бд> <имя бд> <имя пользователя> <порт сервера>");
@@ -190,12 +191,14 @@ public class Server implements Runnable {
             logger.error("Непредвиденная ошибка при расшифровке аргументов командной строки");
             emergencyExit();
         }
-        return new Pair<>(new Pair<>("", ""), 8234);
+        return new Pair<>(new String[] {"", "", ""}, 8234);
     }
 
+    /*
     private static String readDatabasePass() {
         System.out.println("Введите пароль от учетной записи в бд:");
         System.out.print(">");
+
         Console console = System.console();
         if (console != null) {
             return String.valueOf(console.readPassword()).trim();
@@ -206,16 +209,19 @@ public class Server implements Runnable {
         return "";
     }
 
+     */
+
     private static void emergencyExit() {
         logger.error("Осуществляется аварийный выход из сервера");
         System.exit(1);
     }
 
+
     private static void addShutdownHook(Server server) {
         Runtime.getRuntime().addShutdownHook(
                 new Thread(() -> {
                     logger.info("Выполняются действия после сигнала о прекращении работы сервера");
-                    server.getRequestProcessor().getCommandWrapper().getAllInnerCommands().get("save").execute("", null);
+                    server.getRequestProcessor().getCommandWrapper().getAllInnerCommands().get("save").execute("", null, null);
                 }
                 ));
     }

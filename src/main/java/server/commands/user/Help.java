@@ -2,6 +2,7 @@ package server.commands.user;
 
 import server.commands.abstracts.UserCommand;
 import shared.serializable.Pair;
+import shared.serializable.User;
 
 public class Help extends UserCommand {
 
@@ -13,7 +14,7 @@ public class Help extends UserCommand {
 
 
     @Override
-    public Pair<Boolean, String> execute(String arg, Object obj) {
+    public Pair<Boolean, String> execute(String arg, Object obj, User user) {
 
         String errorString;
 

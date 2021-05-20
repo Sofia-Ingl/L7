@@ -3,6 +3,7 @@ package server.commands.user;
 import server.commands.abstracts.UserCommand;
 import shared.data.Movie;
 import shared.serializable.Pair;
+import shared.serializable.User;
 
 import java.util.ArrayList;
 
@@ -16,7 +17,7 @@ public class PrintAscending extends UserCommand {
     }
 
     @Override
-    public Pair<Boolean, String> execute(String arg, Object obj) {
+    public Pair<Boolean, String> execute(String arg, Object obj, User user) {
 
         StringBuilder builder = new StringBuilder();
         synchronized (getCollectionStorage()) {

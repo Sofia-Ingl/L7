@@ -50,7 +50,7 @@ public class DatabaseCollectionHandler {
         int id = resultSet.getInt(DatabaseConstants.MOVIE_ID_COLUMN_IN_MOVIES);
         String name = resultSet.getString(DatabaseConstants.MOVIE_NAME_COLUMN_IN_MOVIES);
         Coordinates coordinates = new Coordinates(resultSet.getFloat(DatabaseConstants.X_COORDINATE_COLUMN_IN_MOVIES), resultSet.getInt(DatabaseConstants.Y_COORDINATE_COLUMN_IN_MOVIES));
-        ZonedDateTime creationDate = ZonedDateTime.of(resultSet.getTimestamp(DatabaseConstants.CREATION_DATE_COLUMN_IN_MOVIES).toLocalDateTime(), ZoneId.of(DatabaseConstants.CREATION_DATE_ZONE_COLUMN_IN_MOVIES));
+        ZonedDateTime creationDate = ZonedDateTime.of(resultSet.getTimestamp(DatabaseConstants.CREATION_DATE_COLUMN_IN_MOVIES).toLocalDateTime(), ZoneId.of(resultSet.getString(DatabaseConstants.CREATION_DATE_ZONE_COLUMN_IN_MOVIES)));
         int oscars = resultSet.getInt(DatabaseConstants.OSCARS_COUNT_COLUMN_IN_MOVIES);
         long palms = resultSet.getLong(DatabaseConstants.PALMS_COUNT_COLUMN_IN_MOVIES);
         String tagline = resultSet.getString(DatabaseConstants.TAGLINE_COLUMN_IN_MOVIES);
@@ -97,8 +97,8 @@ public class DatabaseCollectionHandler {
         PreparedStatement insertMovieStatement;
         PreparedStatement insertScreenwriterStatement;
 
-        Savepoint savepoint = databaseManager.setSavepoint();
         databaseManager.setRegulatedCommit();
+        Savepoint savepoint = databaseManager.setSavepoint();
 
         insertScreenwriterStatement = databaseManager.getPreparedStatement(QueryConstants.INSERT_SCREENWRITER, true);
         insertMovieStatement = databaseManager.getPreparedStatement(QueryConstants.INSERT_MOVIE, true);
@@ -123,7 +123,7 @@ public class DatabaseCollectionHandler {
             if (insertScreenwriterStatement.executeUpdate() == 0) throw new SQLException();
             ResultSet generatedScreenwriterKeys = insertScreenwriterStatement.getGeneratedKeys();
 
-            int screenwriterId = -1;
+            int screenwriterId;
             if (generatedScreenwriterKeys.next()) {
                 screenwriterId = generatedScreenwriterKeys.getInt(1);
             } else throw new SQLException();
@@ -146,7 +146,7 @@ public class DatabaseCollectionHandler {
 
             if (insertMovieStatement.executeUpdate() == 0) throw new SQLException();
             ResultSet preparedMovieKeys = insertMovieStatement.getGeneratedKeys();
-            int movieId = -1;
+            int movieId;
             if (preparedMovieKeys.next()) {
                 movieId = preparedMovieKeys.getInt(1);
             } else throw new SQLException();

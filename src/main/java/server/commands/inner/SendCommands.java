@@ -2,6 +2,7 @@ package server.commands.inner;
 
 import server.commands.abstracts.InnerServerCommand;
 import shared.serializable.Pair;
+import shared.serializable.User;
 
 public class SendCommands extends InnerServerCommand {
 
@@ -10,7 +11,7 @@ public class SendCommands extends InnerServerCommand {
     }
 
     @Override
-    public Pair<Boolean, String> execute(String arg, Object obj) {
-        return new Pair<>(true, "Список команд");
+    public Pair<Boolean, String> execute(String arg, Object obj, User user) {
+        return new Pair<>(true, "Высылается список команд");
     }
 }

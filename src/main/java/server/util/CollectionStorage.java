@@ -43,10 +43,20 @@ public class CollectionStorage {
     public void loadCollectionFromDatabase() {
         try {
             collection = databaseCollectionHandler.loadCollectionFromDatabase();
+            initTime = LocalDateTime.now();
         } catch (SQLException e) {
             Server.logger.error("Коллекция не была успешно загружена в память...");
             Server.logger.error("Осуществляется выход из приложения...");
             System.exit(1);
+        }
+    }
+
+    public void addMovie(Movie movie) {
+        collection.add(movie);
+        updateTime = LocalDateTime.now();
+        lastAccessTime = updateTime;
+        if (maxMovie == null || maxMovie.compareTo(movie) < 0) {
+            maxMovie = movie;
         }
     }
 
@@ -56,11 +66,8 @@ public class CollectionStorage {
 
 
 
-
-
-
-
-    public CollectionStorage() {}
+    public CollectionStorage() {
+    }
 
     public String getPath() {
         return path;
@@ -328,4 +335,5 @@ public class CollectionStorage {
         }
         return new Pair<>("Коллекция обновилась со времен последней сортировки!", sortedCollection);
     }
+
 }

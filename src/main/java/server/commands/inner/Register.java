@@ -14,10 +14,9 @@ public class Register extends InnerServerCommand {
     }
 
     @Override
-    public Pair<Boolean, String> execute(String arg, Object obj) {
+    public Pair<Boolean, String> execute(String arg, Object obj, User user) {
 
         String answer;
-        User user = (User) obj;
         try {
             boolean successfullyInserted = getUserHandler().insertUser(user);
             if (!successfullyInserted) {

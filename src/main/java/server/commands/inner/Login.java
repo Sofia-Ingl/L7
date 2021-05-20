@@ -17,11 +17,9 @@ public class Login extends InnerServerCommand {
     }
 
     @Override
-    public Pair<Boolean, String> execute(String arg, Object obj) {
+    public Pair<Boolean, String> execute(String arg, Object obj, User user) {
 
         String answer;
-        User user = (User) obj;
-
         try {
             if (getUserHandler().findUserByNameAndPass(user)) {
                 answer = "Пользователь был найден в базе данных, пароль верный";

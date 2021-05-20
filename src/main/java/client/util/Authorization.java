@@ -21,7 +21,9 @@ public class Authorization {
             String register = "register";
             String login = "login";
             String command = (alreadyRegistered()) ? login : register;
-            return new ClientRequest(command, "", new User(getLogin(), getEncodedPassword(getPassword())));
+            User currentUser = new User(getLogin(), getEncodedPassword(getPassword()));
+            interaction.setUser(currentUser);
+            return new ClientRequest(command, "", null, currentUser);
         } catch (Exception e) {
             authFailure();
         }

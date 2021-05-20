@@ -166,7 +166,6 @@ public class Client implements Runnable {
 
         try {
             socketChannel.write(ByteBuffer.wrap(Serialization.serialize(clientRequest)));
-            //interaction.printlnMessage("Запрос успешно отправлен");
         } catch (IOException e) {
             interaction.printlnMessage("Возникла ошибка при отправке пользовательского запроса на сервер");
         }
@@ -229,7 +228,7 @@ public class Client implements Runnable {
                                 request = authorization.logInSystem();
                             }
                         } else {
-                            request = new ClientRequest("send_available_commands", "", null);
+                            request = new ClientRequest("send_available_commands", "", null, interaction.getUser());
                         }
                         if (socketChannel.isConnected()) {
                             sendClientRequest(request);

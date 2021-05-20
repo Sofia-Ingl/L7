@@ -1,8 +1,12 @@
 package server.commands.user;
 
 import server.commands.abstracts.UserCommand;
+import server.util.DatabaseCollectionHandler;
 import shared.data.Movie;
 import shared.serializable.Pair;
+import shared.serializable.User;
+
+import java.sql.SQLException;
 
 public class Add extends UserCommand {
 
@@ -11,7 +15,7 @@ public class Add extends UserCommand {
     }
 
     @Override
-    public Pair<Boolean, String> execute(String arg, Object obj) {
+    public Pair<Boolean, String> execute(String arg, Object obj, User user) {
 
         String errorString;
 
@@ -19,19 +23,20 @@ public class Add extends UserCommand {
             if (!arg.isEmpty()) {
                 throw new IllegalArgumentException("Неверное число аргументов при использовании команды " + this.getName());
             }
-            boolean result;
 
-            synchronized (getCollectionStorage()) {
-                result = getCollectionStorage().addNewElement((Movie) obj);
-            }
+            Movie movie = getDatabaseCollectionHandler().addNewMovie((Movie) obj, user);
+            getCollectionStorage().addMovie(movie);
 
-            if (result) {
-                return new Pair<>(true, "Элемент добавлен в коллекцию!");
-            }
-            return new Pair<>(true, "Такой элемент уже был в коллекции");
+//            synchronized (getCollectionStorage()) {
+//                result = getCollectionStorage().addNewElement((Movie) obj);
+//            }
+
+            return new Pair<>(true, "Элемент добавлен в коллекцию!");
 
         } catch (IllegalArgumentException e) {
             errorString = e.getMessage();
+        } catch (SQLException e) {
+            errorString = "Возникла ошибка при добавлении фильма в базу данных";
         }
 
         return new Pair<>(false, errorString);

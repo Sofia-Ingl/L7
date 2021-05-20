@@ -3,6 +3,7 @@ package server.commands.user;
 import server.commands.abstracts.UserCommand;
 import shared.data.Movie;
 import shared.serializable.Pair;
+import shared.serializable.User;
 
 /**
  * Команда, обновляющая значение элемента с заданным айди.
@@ -14,7 +15,7 @@ public class Update extends UserCommand {
     }
 
     @Override
-    public Pair<Boolean, String> execute(String arg, Object obj) {
+    public Pair<Boolean, String> execute(String arg, Object obj, User user) {
 
         String response;
         try {

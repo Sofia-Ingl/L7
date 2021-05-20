@@ -8,8 +8,8 @@ public class ServerResponse implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String responseToPrint;
-    private CommandExecutionCode code;
+    private final String responseToPrint;
+    private final CommandExecutionCode code;
 
     public ServerResponse(CommandExecutionCode code, String responseToPrint) {
         this.code = code;

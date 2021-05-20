@@ -18,7 +18,7 @@ public class RequestProcessor {
 
     public ServerResponse processTechnicalRequests(ClientRequest request) {
         InnerServerCommand innerServerCommand = commandWrapper.getAllInnerCommands().get(request.getCommand());
-        Pair<Boolean, String> commandResult = innerServerCommand.execute(request.getCommandArgument(), request.getCreatedObject());
+        Pair<Boolean, String> commandResult = innerServerCommand.execute(request.getCommandArgument(), request.getCreatedObject(), request.getUser());
         CommandExecutionCode code = commandResult.getFirst() ? CommandExecutionCode.SUCCESS : CommandExecutionCode.ERROR;
         return new ServerResponse(code, commandResult.getSecond());
     }
@@ -43,7 +43,7 @@ public class RequestProcessor {
         Server.logger.info("Исполняется команда {}", request.getCommand());
         UserCommand userCommand = commandWrapper.getAllCommandsAvailable().get(request.getCommand());
         CommandExecutionCode code = CommandExecutionCode.SUCCESS;
-        Pair<Boolean, String> commandResult = userCommand.execute(request.getCommandArgument(), request.getCreatedObject());
+        Pair<Boolean, String> commandResult = userCommand.execute(request.getCommandArgument(), request.getCreatedObject(), request.getUser());
 
         if (!commandResult.getFirst()) {
             code = CommandExecutionCode.ERROR;

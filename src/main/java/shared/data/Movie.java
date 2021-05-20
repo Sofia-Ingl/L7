@@ -132,6 +132,14 @@ public class Movie implements Comparable<Movie>, Serializable {
         this.tagline = tagline;
     }
 
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
     @Override
     public int compareTo(Movie m) {
         int result = oscarsCount - m.oscarsCount;
