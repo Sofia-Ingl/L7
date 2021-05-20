@@ -24,7 +24,6 @@ public class Show extends UserCommand {
                 responseString.append(movie).append("\n");
             }
         }
-
         return new Pair<>(true, responseString.toString());
 
     }

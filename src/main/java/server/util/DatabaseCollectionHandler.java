@@ -257,4 +257,24 @@ public class DatabaseCollectionHandler {
             databaseManager.closeStatement(deleteMovieByIdStatement);
         }
     }
+
+    public void removeGreaterMovies(Movie movieToCompareWith, User user, CollectionStorage collectionStorage) throws SQLException {
+
+        databaseManager.setRegulatedCommit();
+        Savepoint savepoint = databaseManager.setSavepoint();
+        try {
+            for (Movie m : collectionStorage.getCollection()) {
+                if (movieToCompareWith.compareTo(m) < 0) {
+                    deleteMovieById(m.getId(), user);
+                }
+            }
+        } catch (SQLException e) {
+            Server.logger.warn("Ошибка при выполнении запросов на удаление фильмов, превосходящих заданный, из бд!");
+            databaseManager.rollback(savepoint);
+            throw e;
+        } finally {
+            databaseManager.setAutoCommit();
+        }
+    }
+
 }

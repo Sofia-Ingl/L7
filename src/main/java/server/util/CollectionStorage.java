@@ -132,9 +132,9 @@ public class CollectionStorage {
         int collectionSize = collection.size();
 
         collection = collection
-                    .stream()
-                    .filter(movie -> !(movie.getId() == id && movie.getOwner().getLogin().equals(user.getLogin())))
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
+                .stream()
+                .filter(movie -> !(movie.getId() == id && movie.getOwner().getLogin().equals(user.getLogin())))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
 
         lastAccessTime = LocalDateTime.now();
         if (collectionSize > collection.size()) {
@@ -145,6 +145,19 @@ public class CollectionStorage {
 
         return false;
 
+    }
+
+    public boolean removeGreater(Movie movie, User user) {
+        if (maxMovie.compareTo(movie) > 0) {
+            collection = collection.stream()
+                    .filter(m -> !(m.compareTo(movie) > 0 && m.getOwner().getLogin().equals(user.getLogin())))
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+            detectMaxMovie();
+            updateTime = LocalDateTime.now();
+            lastAccessTime = updateTime;
+            return true;
+        }
+        return false;
     }
 
 
@@ -161,10 +174,9 @@ public class CollectionStorage {
 
 
 
-
-
-
-
+/*
+УСТАРЕВШИЕ МЕТОДЫ
+ */
 
 
     public void loadCollection(String fullPath) {
