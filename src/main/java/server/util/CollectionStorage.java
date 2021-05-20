@@ -4,6 +4,7 @@ import server.Server;
 import shared.data.Movie;
 import shared.exceptions.MalformedCollectionContentException;
 import shared.serializable.Pair;
+import shared.serializable.User;
 
 import java.lang.reflect.Type;
 import java.sql.SQLException;
@@ -43,7 +44,10 @@ public class CollectionStorage {
     public void loadCollectionFromDatabase() {
         try {
             collection = databaseCollectionHandler.loadCollectionFromDatabase();
+            detectMaxMovie();
             initTime = LocalDateTime.now();
+            updateTime = initTime;
+            lastAccessTime = updateTime;
         } catch (SQLException e) {
             Server.logger.error("Коллекция не была успешно загружена в память...");
             Server.logger.error("Осуществляется выход из приложения...");
@@ -60,10 +64,17 @@ public class CollectionStorage {
         }
     }
 
+    public void deleteElementsByUser(User user) {
+        String username = user.getLogin();
+        collection = collection.stream().filter(x -> !x.getOwner().getLogin().equals(username)).collect(Collectors.toCollection(LinkedHashSet::new));
+        if (maxMovie.getOwner().getLogin().equals(username)) {
+            detectMaxMovie();
+        }
+    }
 
-
-
-
+    public void detectMaxMovie() {
+        maxMovie = collection.stream().max(Comparator.naturalOrder()).orElse(null);
+    }
 
 
     public CollectionStorage() {

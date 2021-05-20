@@ -64,31 +64,7 @@ public final class QueryConstants {
             + DatabaseConstants.USER_NAME_COLUMN_IN_MOVIES + ") "
             + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-    /*
-     this.id = id;
-        this.name = name;
-        this.coordinates = coordinates;
-        this.creationDate = creationDate;
-        this.oscarsCount = oscars;
-        this.goldenPalmCount = palms;
-        this.tagline = tagline;
-        this.genre = genre;
-        this.screenwriter = screenwriter;
-        this.owner = user;
-     */
-    /*
-    public static final String INSERT_SCREENWRITER = "INSERT INTO " + DatabaseConstants.SCREENWRITER_TABLE
-            + " VALUES (nextval('" + DatabaseConstants.SCREENWRITER_ID_SEQUENCE + "'), ?, ?, ?, ?)";
-
-    public static final String INSERT_MOVIE = "INSERT INTO " + DatabaseConstants.MOVIE_TABLE
-            + " VALUES (nextval('" + DatabaseConstants.MOVIE_ID_SEQUENCE + "'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-*/
-
     public static final String INSERT_USER = "INSERT INTO " + DatabaseConstants.USER_TABLE + " VALUES (?, ?)";
-
-
-
 
 
     /*
@@ -104,6 +80,20 @@ public final class QueryConstants {
             " = ? AND " + DatabaseConstants.USER_PASSWORD_COLUMN_IN_USERS + " = ?";
 
     public static final String SELECT_SCREENWRITER_BY_ID = "SELECT * FROM " + DatabaseConstants.SCREENWRITER_TABLE + " WHERE " + DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_SCREENWRITERS + " = ?";
+
+/*
+DELETES
+
+delete from b where (select count(*) from aa where aa.bb = b.hom)=0
+ */
+
+    public static final String DELETE_MOVIES_BY_USER = "DELETE FROM "+ DatabaseConstants.MOVIE_TABLE
+            + " WHERE " + DatabaseConstants.USER_NAME_COLUMN_IN_MOVIES + " = ?";
+
+    public static final String DELETE_SCREENWRITERS_WHICH_ARE_NOT_USED = "DELETE FROM "+ DatabaseConstants.SCREENWRITER_TABLE
+            + " WHERE ( SELECT COUNT(*) FROM " + DatabaseConstants.MOVIE_TABLE + " WHERE "
+            + DatabaseConstants.MOVIE_TABLE + "." + DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_MOVIES + " = "
+            + DatabaseConstants.SCREENWRITER_TABLE + "." + DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_SCREENWRITERS + ") = 0";
 
 
     private QueryConstants() {

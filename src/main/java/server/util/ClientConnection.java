@@ -29,8 +29,6 @@ public class ClientConnection implements Runnable {
 
         try {
 
-            //socket.getOutputStream().write(Serialization.serialize(server.getRequestProcessor().getCommandWrapper().mapOfCommandsToSend()));
-
             do {
 
                 byte[] b = new byte[65536];
@@ -63,19 +61,6 @@ public class ClientConnection implements Runnable {
                     if (!clientRequest.getCommand().equals("send_available_commands")) {
                         sendObjectInNewThread(serverResponse);
                     }
-
-//                    ServerResponse finalServerResponse = serverResponse;
-//                    Thread responseThread = new Thread(() -> {
-//                        try {
-//                            socket.getOutputStream().write(Serialization.serialize(finalServerResponse));
-//                            Server.logger.info("Ответ успешно отправлен");
-//                        } catch (IOException e) {
-//                            Server.logger.info("Ошибка соединения при отправке ответа клиенту");
-//                        }
-//                    });
-//                    responseThread.start();
-
-                    //socket.getOutputStream().write(Serialization.serialize(serverResponse));
                 }
 
             } while (serverResponse.getCode() != CommandExecutionCode.EXIT);
@@ -100,7 +85,6 @@ public class ClientConnection implements Runnable {
         Thread responseThread = new Thread(() -> {
             try {
                 socket.getOutputStream().write(Serialization.serialize(o));
-                //Server.logger.info("Ответ успешно отправлен");
             } catch (IOException e) {
                 Server.logger.info("Ошибка соединения при отправке ответа клиенту");
             }

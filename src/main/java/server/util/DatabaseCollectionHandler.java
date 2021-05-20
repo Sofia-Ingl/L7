@@ -157,24 +157,6 @@ public class DatabaseCollectionHandler {
             databaseManager.commit();
             return movie;
 
-            /*
-        public static final String INSERT_MOVIE = "INSERT INTO " + DatabaseConstants.MOVIE_TABLE
-            + " (" + DatabaseConstants.MOVIE_NAME_COLUMN_IN_MOVIES + ", "
-            + DatabaseConstants.X_COORDINATE_COLUMN_IN_MOVIES + ", "
-            + DatabaseConstants.Y_COORDINATE_COLUMN_IN_MOVIES + ", "
-            + DatabaseConstants.CREATION_DATE_COLUMN_IN_MOVIES + ", "
-            + DatabaseConstants.CREATION_DATE_ZONE_COLUMN_IN_MOVIES + ", "
-            + DatabaseConstants.OSCARS_COUNT_COLUMN_IN_MOVIES + ", "
-            + DatabaseConstants.PALMS_COUNT_COLUMN_IN_MOVIES + ", "
-            + DatabaseConstants.TAGLINE_COLUMN_IN_MOVIES + ", "
-            + DatabaseConstants.GENRE_COLUMN_IN_MOVIES + ", "
-            + DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_MOVIES + ", "
-            + DatabaseConstants.USER_NAME_COLUMN_IN_MOVIES + ") "
-            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-     */
-
-
         } catch (SQLException e) {
             Server.logger.warn("Ошибка при выполнении запросов на добавление нового объекта в бд!");
             databaseManager.rollback(savepoint);
@@ -187,7 +169,33 @@ public class DatabaseCollectionHandler {
 
     }
 
-    public UserHandler getUserHandler() {
-        return userHandler;
+    public void deleteAllMoviesBelongToUser(User user) throws SQLException {
+
+        PreparedStatement deleteMoviesStatement;
+        PreparedStatement deleteScreenwritersStatement;
+
+        databaseManager.setRegulatedCommit();
+        Savepoint savepoint = databaseManager.setSavepoint();
+
+        deleteMoviesStatement = databaseManager.getPreparedStatement(QueryConstants.DELETE_MOVIES_BY_USER, false);
+        deleteScreenwritersStatement = databaseManager.getPreparedStatement(QueryConstants.DELETE_SCREENWRITERS_WHICH_ARE_NOT_USED, false);
+
+        try {
+
+            deleteMoviesStatement.setString(1, user.getLogin());
+            deleteMoviesStatement.executeUpdate();
+
+            deleteScreenwritersStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            Server.logger.warn("Ошибка при выполнении запросов на удаление принадлежащих пользователю объектов из бд!");
+            databaseManager.rollback(savepoint);
+            throw e;
+        } finally {
+            databaseManager.closeStatement(deleteMoviesStatement);
+            databaseManager.closeStatement(deleteScreenwritersStatement);
+            databaseManager.setAutoCommit();
+        }
+
     }
 }

@@ -21,8 +21,8 @@ public class Save extends InnerServerCommand {
             result = FileHelper.fileOutputLoader(getCollectionStorage().getCollection(), getCollectionStorage().getPath());
         }
 
-         */
         Server.logger.info("Выполняется сохранение коллекции в файл");
+        */
         return new Pair<>(result, "");
     }
 }

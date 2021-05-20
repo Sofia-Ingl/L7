@@ -4,6 +4,8 @@ import server.commands.abstracts.UserCommand;
 import shared.serializable.Pair;
 import shared.serializable.User;
 
+import java.sql.SQLException;
+
 public class Clear extends UserCommand {
 
     public Clear() {
@@ -12,9 +14,17 @@ public class Clear extends UserCommand {
 
     @Override
     public Pair<Boolean, String> execute(String arg, Object obj, User user) {
-        synchronized (getCollectionStorage()) {
-            getCollectionStorage().clearCollection();
+
+        String errorString;
+        try {
+
+            getDatabaseCollectionHandler().deleteAllMoviesBelongToUser(user);
+            getCollectionStorage().deleteElementsByUser(user);
+
+            return new Pair<>(true, "Все объекты, принадлежащие пользователю, удалены из коллекции");
+        } catch (SQLException e) {
+            errorString = "Произошла ошибка при удалении фильмов, принадлежащих пользователю, из базы данных";
         }
-        return new Pair<>(true, "Коллекция очищена");
+        return new Pair<>(false, errorString);
     }
 }

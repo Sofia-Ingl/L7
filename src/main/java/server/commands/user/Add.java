@@ -20,21 +20,12 @@ public class Add extends UserCommand {
         String errorString;
 
         try {
-            if (!arg.isEmpty()) {
-                throw new IllegalArgumentException("Неверное число аргументов при использовании команды " + this.getName());
-            }
 
             Movie movie = getDatabaseCollectionHandler().addNewMovie((Movie) obj, user);
             getCollectionStorage().addMovie(movie);
 
-//            synchronized (getCollectionStorage()) {
-//                result = getCollectionStorage().addNewElement((Movie) obj);
-//            }
-
             return new Pair<>(true, "Элемент добавлен в коллекцию!");
 
-        } catch (IllegalArgumentException e) {
-            errorString = e.getMessage();
         } catch (SQLException e) {
             errorString = "Возникла ошибка при добавлении фильма в базу данных";
         }

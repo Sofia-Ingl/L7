@@ -5,6 +5,8 @@ import shared.data.Movie;
 import shared.serializable.Pair;
 import shared.serializable.User;
 
+import java.sql.SQLException;
+
 public class AddIfMax extends UserCommand {
 
     public AddIfMax() {
@@ -18,20 +20,21 @@ public class AddIfMax extends UserCommand {
         String response;
         Movie newMovie = (Movie) obj;
 
-        synchronized (getCollectionStorage()) {
-            if (getCollectionStorage().getMaxMovie() == null || getCollectionStorage().getMaxMovie().compareTo(newMovie) < 0) {
-                boolean success;
-                success = getCollectionStorage().addNewElement(newMovie);
+        try {
 
-                if (!success) {
-                    response = "Произошла коллизия, аналогичный элемент содержится в коллекции, поэтому заданный элемент не может быть добавлен";
-                } else {
-                    response = "Предложенный вами фильм превосходит максимальный в коллекции => он будет добавлен.";
-                }
+            if (getCollectionStorage().getMaxMovie() == null || getCollectionStorage().getMaxMovie().compareTo(newMovie) < 0) {
+
+                newMovie = getDatabaseCollectionHandler().addNewMovie(newMovie, user);
+                getCollectionStorage().addMovie(newMovie);
+                response = "Предложенный вами фильм превосходит максимальный в коллекции => он будет добавлен.";
             } else {
-                response = "Предложеннй фильм максимальным не является => он не будет добавлен.";
+                response = "Предложенный фильм максимальным не является => он не будет добавлен";
             }
+            return new Pair<>(true, response);
+
+        } catch (SQLException e) {
+            response = "Произошла ошибка при добавлении фильма в базу данных";
         }
-        return new Pair<>(true, response);
+        return new Pair<>(false, response);
     }
 }
