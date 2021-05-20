@@ -3,6 +3,7 @@ package shared.data;
 import com.google.gson.annotations.Expose;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Человек.
@@ -41,6 +42,22 @@ public class Person implements Serializable {
 
     public Country getNationality() {
         return nationality;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Person)) return false;
+        Person person = (Person) o;
+        return Objects.equals(getName(), person.getName()) &&
+                Objects.equals(getHeight(), person.getHeight()) &&
+                getEyeColor() == person.getEyeColor() &&
+                getNationality() == person.getNationality();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), getHeight(), getEyeColor(), getNationality());
     }
 
     @Override

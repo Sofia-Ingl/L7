@@ -160,6 +160,16 @@ public class CollectionStorage {
         return false;
     }
 
+    public Movie getByUserAndId(int id, User user) {
+        lastAccessTime = LocalDateTime.now();
+        updateTime = lastAccessTime;
+        return collection.stream()
+                .filter(m -> (m.getId() == id && m.getOwner().getLogin().equals(user.getLogin())))
+                .findFirst()
+                .orElse(null);
+
+    }
+
 
 
 

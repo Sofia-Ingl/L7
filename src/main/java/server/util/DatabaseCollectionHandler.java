@@ -1,6 +1,5 @@
 package server.util;
 
-import com.google.gson.annotations.Expose;
 import server.Server;
 import server.util.constants.DatabaseConstants;
 import server.util.constants.QueryConstants;
@@ -10,7 +9,6 @@ import shared.serializable.User;
 import java.sql.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
 public class DatabaseCollectionHandler {
@@ -108,18 +106,7 @@ public class DatabaseCollectionHandler {
 
             Person screenwriter = movie.getScreenwriter();
 
-            insertScreenwriterStatement.setString(1, screenwriter.getName());
-            insertScreenwriterStatement.setLong(2, screenwriter.getHeight());
-            if (screenwriter.getEyeColor() != null) {
-                insertScreenwriterStatement.setString(3, screenwriter.getEyeColor().toString());
-            } else {
-                insertScreenwriterStatement.setNull(3, Types.LONGVARCHAR);
-            }
-            if (screenwriter.getNationality() != null) {
-                insertScreenwriterStatement.setString(4, screenwriter.getNationality().toString());
-            } else {
-                insertScreenwriterStatement.setNull(4, Types.LONGVARCHAR);
-            }
+            setScreenwriterQueryParams(insertScreenwriterStatement, screenwriter);
 
             if (insertScreenwriterStatement.executeUpdate() == 0) throw new SQLException();
             ResultSet generatedScreenwriterKeys = insertScreenwriterStatement.getGeneratedKeys();
@@ -170,6 +157,21 @@ public class DatabaseCollectionHandler {
 
     }
 
+    private void setScreenwriterQueryParams(PreparedStatement insertScreenwriterStatement, Person screenwriter) throws SQLException {
+        insertScreenwriterStatement.setString(1, screenwriter.getName());
+        insertScreenwriterStatement.setLong(2, screenwriter.getHeight());
+        if (screenwriter.getEyeColor() != null) {
+            insertScreenwriterStatement.setString(3, screenwriter.getEyeColor().toString());
+        } else {
+            insertScreenwriterStatement.setNull(3, Types.LONGVARCHAR);
+        }
+        if (screenwriter.getNationality() != null) {
+            insertScreenwriterStatement.setString(4, screenwriter.getNationality().toString());
+        } else {
+            insertScreenwriterStatement.setNull(4, Types.LONGVARCHAR);
+        }
+    }
+
     public void deleteAllMoviesBelongToUser(User user) throws SQLException {
 
         PreparedStatement deleteMoviesStatement;
@@ -187,6 +189,7 @@ public class DatabaseCollectionHandler {
             deleteMoviesStatement.executeUpdate();
 
             deleteScreenwritersStatement.executeUpdate();
+            databaseManager.commit();
 
         } catch (SQLException e) {
             Server.logger.warn("Ошибка при выполнении запросов на удаление принадлежащих пользователю объектов из бд!");
@@ -227,6 +230,7 @@ public class DatabaseCollectionHandler {
             }
 
             deleteScreenwritersStatement.executeUpdate();
+            databaseManager.commit();
 
 
         } catch (SQLException e) {
@@ -268,11 +272,112 @@ public class DatabaseCollectionHandler {
                     deleteMovieById(m.getId(), user);
                 }
             }
+            databaseManager.commit();
+
         } catch (SQLException e) {
             Server.logger.warn("Ошибка при выполнении запросов на удаление фильмов, превосходящих заданный, из бд!");
             databaseManager.rollback(savepoint);
             throw e;
         } finally {
+            databaseManager.setAutoCommit();
+        }
+    }
+
+    public void updateMovieById(int id, Movie movie, User user) throws SQLException {
+
+        PreparedStatement selectScreenwriterIdStatement = databaseManager.getPreparedStatement(QueryConstants.SELECT_SCREENWRITER_ID_BY_MOVIE_ID_AND_USER, false);
+        PreparedStatement countScreenwriterUsages = databaseManager.getPreparedStatement(QueryConstants.COUNT_SCREENWRITER_USAGES, false);
+        PreparedStatement createNewScreenwriter = databaseManager.getPreparedStatement(QueryConstants.INSERT_SCREENWRITER, true);
+        PreparedStatement updateScreenwriter = databaseManager.getPreparedStatement(QueryConstants.UPDATE_SCREENWRITER_BY_ID, false);
+        PreparedStatement updateMovie = databaseManager.getPreparedStatement(QueryConstants.UPDATE_MOVIE_BY_ID, false);
+
+        databaseManager.setRegulatedCommit();
+        Savepoint savepoint = databaseManager.setSavepoint();
+        try {
+
+            int scrId;
+
+            selectScreenwriterIdStatement.setInt(1, id);
+            selectScreenwriterIdStatement.setString(2, user.getLogin());
+            ResultSet resultSet = selectScreenwriterIdStatement.executeQuery();
+
+            if (resultSet.next()) {
+                scrId = resultSet.getInt(DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_MOVIES);
+            } else return;
+
+            countScreenwriterUsages.setInt(1, scrId);
+            resultSet = countScreenwriterUsages.executeQuery();
+
+            if (resultSet.next()) {
+                int counts = resultSet.getInt(1);
+
+                Person newScreenwriter = movie.getScreenwriter();
+                if (counts <= 1) {
+
+                    setScreenwriterQueryParams(updateScreenwriter, newScreenwriter);
+                    updateScreenwriter.setInt(5, scrId);
+
+                    updateScreenwriter.executeUpdate();
+
+                } else {
+                    Person previousScreenwriter = getScreenwriterById(scrId);
+                    if (!previousScreenwriter.equals(newScreenwriter)) {
+
+                        setScreenwriterQueryParams(createNewScreenwriter, newScreenwriter);
+                        createNewScreenwriter.executeUpdate();
+
+                        ResultSet generatedKeys = createNewScreenwriter.getGeneratedKeys();
+                        if (generatedKeys.next()) {
+                            scrId = generatedKeys.getInt(1);
+                        } else throw new SQLException();
+
+                    }
+
+                }
+
+                updateMovie.setString(1, movie.getName());
+                updateMovie.setFloat(2, movie.getCoordinates().getX());
+                updateMovie.setInt(3, movie.getCoordinates().getY());
+                updateMovie.setInt(4, movie.getOscarsCount());
+                updateMovie.setLong(5, movie.getGoldenPalmCount());
+                updateMovie.setString(6, movie.getTagline());
+                updateMovie.setInt(7, scrId);
+                updateMovie.setString(8, movie.getGenre().toString());
+                updateMovie.setInt(9, id);
+                updateMovie.setString(10, user.getLogin());
+
+                if (updateMovie.executeUpdate() == 0) throw new SQLException();
+
+            }
+
+            databaseManager.commit();
+
+            /*
+
+    public static final String UPDATE_MOVIE_BY_ID = "UPDATE " + DatabaseConstants.MOVIE_TABLE + " SET "
+            + DatabaseConstants.MOVIE_NAME_COLUMN_IN_MOVIES + " = ?, "
+            + DatabaseConstants.X_COORDINATE_COLUMN_IN_MOVIES + " = ?, "
+            + DatabaseConstants.Y_COORDINATE_COLUMN_IN_MOVIES + " = ?, "
+            + DatabaseConstants.OSCARS_COUNT_COLUMN_IN_MOVIES + " = ?, "
+            + DatabaseConstants.PALMS_COUNT_COLUMN_IN_MOVIES + " = ?, "
+            + DatabaseConstants.TAGLINE_COLUMN_IN_MOVIES + " = ?, "
+            + DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_MOVIES + " = ?, "
+            + DatabaseConstants.GENRE_COLUMN_IN_MOVIES + " = ?"
+            + " WHERE " + DatabaseConstants.MOVIE_ID_COLUMN_IN_MOVIES + " = ? AND "
+            + DatabaseConstants.USER_NAME_COLUMN_IN_MOVIES + " = ?";
+
+             */
+
+        } catch (SQLException e) {
+            Server.logger.warn("Ошибка при выполнении запросов на изменение фильма по id в бд!");
+            databaseManager.rollback(savepoint);
+            throw e;
+        } finally {
+            databaseManager.closeStatement(selectScreenwriterIdStatement);
+            databaseManager.closeStatement(countScreenwriterUsages);
+            databaseManager.closeStatement(createNewScreenwriter);
+            databaseManager.closeStatement(updateScreenwriter);
+            databaseManager.closeStatement(updateMovie);
             databaseManager.setAutoCommit();
         }
     }

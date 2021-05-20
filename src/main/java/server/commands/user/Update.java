@@ -5,6 +5,8 @@ import shared.data.Movie;
 import shared.serializable.Pair;
 import shared.serializable.User;
 
+import java.sql.SQLException;
+
 /**
  * Команда, обновляющая значение элемента с заданным айди.
  */
@@ -23,23 +25,24 @@ public class Update extends UserCommand {
                 throw new IllegalArgumentException("Неправильный тип аргумента к команде!");
             } else {
                 int id = Integer.parseInt(arg.trim());
-                synchronized (getCollectionStorage()) {
+                Movie m2 = (Movie) obj;
 
-                    Movie m1 = getCollectionStorage().streamGetById(id);
-                    if (m1 != null) {
-                        Movie m2 = (Movie) obj;
-                        m1.setName(m2.getName());
-                        m1.setCoordinates(m2.getCoordinates());
-                        m1.setGenre(m2.getGenre());
-                        m1.setOscarsCount(m2.getOscarsCount());
-                        m1.setGoldenPalmCount(m2.getGoldenPalmCount());
-                        m1.setTagline(m2.getTagline());
-                        m1.setScreenwriter(m2.getScreenwriter());
-                        response = "Элемент успешно обновлен";
-                    } else {
-                        response = "Нет элемента с таким значением id!";
-                    }
+                getDatabaseCollectionHandler().updateMovieById(id, m2, user);
+
+                Movie m1 = getCollectionStorage().getByUserAndId(id, user);
+                if (m1 != null) {
+                    m1.setName(m2.getName());
+                    m1.setCoordinates(m2.getCoordinates());
+                    m1.setGenre(m2.getGenre());
+                    m1.setOscarsCount(m2.getOscarsCount());
+                    m1.setGoldenPalmCount(m2.getGoldenPalmCount());
+                    m1.setTagline(m2.getTagline());
+                    m1.setScreenwriter(m2.getScreenwriter());
+                    response = "Элемент успешно обновлен";
+                } else {
+                    response = "Нет принадлежащего пользователю элемента с таким значением id!";
                 }
+
             }
 
             return new Pair<>(true, response);
@@ -48,6 +51,8 @@ public class Update extends UserCommand {
             response = "Неправильно введен аргумент!";
         } catch (IllegalArgumentException e) {
             response = e.getMessage();
+        } catch (SQLException e) {
+            response = "Произошла ошибка при обращении к базе данных";
         }
         return new Pair<>(false, response);
     }

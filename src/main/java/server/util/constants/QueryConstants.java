@@ -71,8 +71,6 @@ public final class QueryConstants {
     SELECTS
      */
     public static final String SELECT_ALL_MOVIES = "SELECT * FROM " + DatabaseConstants.MOVIE_TABLE;
-    public static final String SELECT_ALL_SCREENWRITERS = "SELECT * FROM " + DatabaseConstants.SCREENWRITER_TABLE;
-    public static final String SELECT_ALL_USERS = "SELECT * FROM " + DatabaseConstants.USER_TABLE;
 
     public static final String SELECT_USER_BY_NAME = "SELECT * FROM " + DatabaseConstants.USER_TABLE + " WHERE " + DatabaseConstants.USER_NAME_COLUMN_IN_USERS + " = ?";
 
@@ -84,6 +82,10 @@ public final class QueryConstants {
     public static final String SELECT_SCREENWRITER_ID_BY_NAME = "SELECT " + DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_SCREENWRITERS + " FROM "
             + DatabaseConstants.SCREENWRITER_TABLE + " WHERE LOWER(" + DatabaseConstants.SCREENWRITER_NAME_COLUMN_IN_SCREENWRITERS
             + ") LIKE LOWER(?)";
+
+    public static final String SELECT_SCREENWRITER_ID_BY_MOVIE_ID_AND_USER = " SELECT " + DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_MOVIES
+            + " FROM " + DatabaseConstants.MOVIE_TABLE + " WHERE " + DatabaseConstants.MOVIE_ID_COLUMN_IN_MOVIES
+            + " = ? AND " + DatabaseConstants.USER_NAME_COLUMN_IN_MOVIES + " = ?";
 
 /*
 DELETES
@@ -112,6 +114,34 @@ DELETES
             + " WHERE " + DatabaseConstants.MOVIE_ID_COLUMN_IN_MOVIES + " = ? AND "
             + DatabaseConstants.USER_NAME_COLUMN_IN_MOVIES + " = ?";
 
+    /*
+    UPDATES
+     */
+
+    public static final String UPDATE_MOVIE_BY_ID = "UPDATE " + DatabaseConstants.MOVIE_TABLE + " SET "
+            + DatabaseConstants.MOVIE_NAME_COLUMN_IN_MOVIES + " = ?, "
+            + DatabaseConstants.X_COORDINATE_COLUMN_IN_MOVIES + " = ?, "
+            + DatabaseConstants.Y_COORDINATE_COLUMN_IN_MOVIES + " = ?, "
+            + DatabaseConstants.OSCARS_COUNT_COLUMN_IN_MOVIES + " = ?, "
+            + DatabaseConstants.PALMS_COUNT_COLUMN_IN_MOVIES + " = ?, "
+            + DatabaseConstants.TAGLINE_COLUMN_IN_MOVIES + " = ?, "
+            + DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_MOVIES + " = ?, "
+            + DatabaseConstants.GENRE_COLUMN_IN_MOVIES + " = ?"
+            + " WHERE " + DatabaseConstants.MOVIE_ID_COLUMN_IN_MOVIES + " = ? AND "
+            + DatabaseConstants.USER_NAME_COLUMN_IN_MOVIES + " = ?";
+
+    public static final String UPDATE_SCREENWRITER_BY_ID = "UPDATE " + DatabaseConstants.SCREENWRITER_TABLE + " SET "
+            + DatabaseConstants.SCREENWRITER_NAME_COLUMN_IN_SCREENWRITERS + " = ?, "
+            + DatabaseConstants.HEIGHT_COLUMN_IN_SCREENWRITERS + " = ?, "
+            + DatabaseConstants.EYE_COLOR_COLUMN_IN_SCREENWRITERS + " = ?, "
+            + DatabaseConstants.NATION_COLUMN_IN_SCREENWRITERS  + " = ?"
+            + " WHERE " + DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_SCREENWRITERS + " = ?";
+
+    /*
+    COUNTS
+     */
+    public static final String COUNT_SCREENWRITER_USAGES = "SELECT COUNT(*) FROM " + DatabaseConstants.MOVIE_TABLE
+            + " WHERE " + DatabaseConstants.SCREENWRITER_ID_COLUMN_IN_MOVIES + " = ?";
 
     private QueryConstants() {}
 }
