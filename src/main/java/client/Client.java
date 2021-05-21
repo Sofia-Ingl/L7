@@ -136,7 +136,6 @@ public class Client implements Runnable {
             interaction.printlnMessage(e.getMessage());
         } catch (Exception e) {
             interaction.printlnMessage("Возникла непредвиденная ошибка");
-            e.printStackTrace();
         }
     }
 
@@ -191,7 +190,8 @@ public class Client implements Runnable {
             selector = Selector.open();
             interaction.printlnMessage("Селектор инициализирован");
         } catch (IOException e) {
-            e.printStackTrace();
+            interaction.printlnMessage("Ошибка при инициализации селектора");
+            emergencyExit();
         }
     }
 

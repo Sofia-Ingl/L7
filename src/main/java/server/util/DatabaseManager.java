@@ -34,11 +34,6 @@ public class DatabaseManager {
             Server.logger.info("Соединение с базой данных установлено");
         } catch (ClassNotFoundException | SQLException e) {
             Server.logger.error("Ошибка при установлении соединения с базой данных");
-            Server.logger.error(e.getMessage());
-            for (StackTraceElement element :
-                    e.getStackTrace()) {
-                Server.logger.error(element.toString());
-            }
             throw new SQLException();
         }
     }
@@ -50,11 +45,6 @@ public class DatabaseManager {
             Server.logger.info("Соединение с базой данных закрыто");
         } catch (SQLException e) {
             Server.logger.error("Ошибка при закрытии соединения с базой данных");
-            Server.logger.error(e.getMessage());
-            for (StackTraceElement element :
-                    e.getStackTrace()) {
-                Server.logger.error(element.toString());
-            }
         }
     }
 
@@ -66,11 +56,6 @@ public class DatabaseManager {
             return statement;
         } catch (SQLException e) {
             Server.logger.error("Ошибка при подготовке SQL запроса");
-            Server.logger.error(e.getMessage());
-            for (StackTraceElement element :
-                    e.getStackTrace()) {
-                Server.logger.error(element.toString());
-            }
         }
         return null;
     }
@@ -79,7 +64,7 @@ public class DatabaseManager {
         try {
             statement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            Server.logger.warn("Ошибка при попытке закрыть объект запроса");
         }
     }
 
@@ -95,7 +80,7 @@ public class DatabaseManager {
             statement.execute(QueryConstants.MOVIE_TABLE_CREATOR);
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            Server.logger.warn("Ошибка при попытке создать недостающие таблицы (если такие есть)");
             throw e;
         } finally {
             if (statement != null) {
@@ -109,7 +94,6 @@ public class DatabaseManager {
             connection.setAutoCommit(true);
         } catch (SQLException e) {
             Server.logger.warn("Ошибка при установке AutoCommit режима базы данных");
-            e.printStackTrace();
         }
     }
 
@@ -118,7 +102,6 @@ public class DatabaseManager {
             connection.setAutoCommit(false);
         } catch (SQLException e) {
             Server.logger.warn("Ошибка при изменении режима работы с базой данных");
-            e.printStackTrace();
         }
     }
 
@@ -129,7 +112,6 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             Server.logger.warn("Ошибка при отмене изменений");
-            e.printStackTrace();
         }
     }
 
@@ -137,8 +119,7 @@ public class DatabaseManager {
         try {
             return connection.setSavepoint();
         } catch (SQLException e) {
-            Server.logger.warn("Ошибка при отмене изменений");
-            e.printStackTrace();
+            Server.logger.warn("Ошибка при установке чекпоинта в режиме ручных коммитов");
         }
         return null;
     }
@@ -148,7 +129,6 @@ public class DatabaseManager {
             connection.commit();
         } catch (SQLException e) {
             Server.logger.warn("Ошибка при утверждении изменений");
-            e.printStackTrace();
         }
     }
 

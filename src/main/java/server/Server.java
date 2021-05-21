@@ -133,7 +133,7 @@ public class Server implements Runnable {
                 return new Pair<>(new String[] {databaseAddress, databaseUsername, userPass}, port);
 
             } else {
-                throw new IllegalArgumentException("При запуске jar некорректно указаны аргументы (правильный вариант: java -jar <имя jar> <хост бд> <имя бд> <имя пользователя> <порт сервера>");
+                throw new IllegalArgumentException("При запуске jar некорректно указаны аргументы (правильный вариант: java -jar <имя jar> <хост бд> <имя бд> <имя пользователя> <пароль> <порт сервера>");
             }
         } catch (NumberFormatException e) {
             logger.error("Порт должен быть целым числом");

@@ -32,11 +32,6 @@ public class DatabaseCollectionHandler {
             }
         } catch (SQLException e) {
             Server.logger.error("Ошибка при загрузке коллекции из базы данных");
-            Server.logger.error(e.getMessage());
-            for (StackTraceElement element :
-                    e.getStackTrace()) {
-                Server.logger.error(element.toString());
-            }
             throw e;
         } finally {
             if (getThemAllPrepared != null) databaseManager.closeStatement(getThemAllPrepared);
