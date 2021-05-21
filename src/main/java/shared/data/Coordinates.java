@@ -1,7 +1,5 @@
 package shared.data;
 
-import com.google.gson.annotations.Expose;
-
 import java.io.Serializable;
 
 /**

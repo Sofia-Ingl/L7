@@ -1,16 +1,4 @@
-2021-05-21 14:26:34,124 ERROR [main] [DatabaseManager.java:36] Ошибка при установлении соединения с базой данных
-2021-05-21 14:26:34,124 ERROR [main] [DatabaseManager.java:37] ВАЖНО: база данных "postgre" не существует (pgjdbc: autodetected server-encoding to be windows-1251, if the message is not readable, please check database logs and/or host, port, dbname, user, password, pg_hba.conf)
-2021-05-21 14:26:34,124 ERROR [main] [DatabaseManager.java:40] org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2553)
-2021-05-21 14:26:34,124 ERROR [main] [DatabaseManager.java:40] org.postgresql.core.v3.QueryExecutorImpl.readStartupMessages(QueryExecutorImpl.java:2665)
-2021-05-21 14:26:34,124 ERROR [main] [DatabaseManager.java:40] org.postgresql.core.v3.QueryExecutorImpl.<init>(QueryExecutorImpl.java:147)
-2021-05-21 14:26:34,124 ERROR [main] [DatabaseManager.java:40] org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:273)
-2021-05-21 14:26:34,124 ERROR [main] [DatabaseManager.java:40] org.postgresql.core.ConnectionFactory.openConnection(ConnectionFactory.java:51)
-2021-05-21 14:26:34,124 ERROR [main] [DatabaseManager.java:40] org.postgresql.jdbc.PgConnection.<init>(PgConnection.java:223)
-2021-05-21 14:26:34,124 ERROR [main] [DatabaseManager.java:40] org.postgresql.Driver.makeConnection(Driver.java:465)
-2021-05-21 14:26:34,124 ERROR [main] [DatabaseManager.java:40] org.postgresql.Driver.connect(Driver.java:264)
-2021-05-21 14:26:34,124 ERROR [main] [DatabaseManager.java:40] java.sql.DriverManager.getConnection(DriverManager.java:664)
-2021-05-21 14:26:34,124 ERROR [main] [DatabaseManager.java:40] java.sql.DriverManager.getConnection(DriverManager.java:247)
-2021-05-21 14:26:34,124 ERROR [main] [DatabaseManager.java:40] server.util.DatabaseManager.establishConnectionWithDatabase(DatabaseManager.java:33)
-2021-05-21 14:26:34,124 ERROR [main] [DatabaseManager.java:40] server.util.DatabaseManager.<init>(DatabaseManager.java:21)
-2021-05-21 14:26:34,124 ERROR [main] [DatabaseManager.java:40] server.Server.main(Server.java:32)
-2021-05-21 14:26:34,124 ERROR [main] [DatabaseManager.java:24] Возникла ошибка соединения с базой данных. Будет осуществлен аварийный выход из сервера
+2021-05-21 14:50:12,516 INFO [main] [DatabaseManager.java:34] Соединение с базой данных установлено
+2021-05-21 14:50:12,755 INFO [main] [Server.java:58] Сервер запускается...
+2021-05-21 14:50:12,757 INFO [main] [Server.java:97] Фабрика сокетов создана
+2021-05-21 14:50:12,764 INFO [main] [Server.java:109] Прослушивается порт 3132
