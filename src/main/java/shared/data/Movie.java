@@ -1,6 +1,5 @@
 package shared.data;
 
-import com.google.gson.annotations.Expose;
 import shared.serializable.User;
 
 import java.io.Serializable;
@@ -12,26 +11,16 @@ import java.util.Objects;
  */
 public class Movie implements Comparable<Movie>, Serializable {
 
-
     private static final long serialVersionUID = 1L;
 
-    @Expose
     private int id; //Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
-    @Expose
     private String name; //Поле не может быть null, Строка не может быть пустой
-    @Expose
     private Coordinates coordinates; //Поле не может быть null
-
     private ZonedDateTime creationDate;//Поле не может быть null, Значение этого поля должно генерироваться автоматически
-    @Expose
     private int oscarsCount; //Значение поля должно быть больше 0
-    @Expose
     private long goldenPalmCount; //Значение поля должно быть больше 0
-    @Expose
     private String tagline; //Поле не может быть null
-    @Expose
     private MovieGenre genre; //Поле не может быть null
-    @Expose
     private Person screenwriter;
 
     private User owner;

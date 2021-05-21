@@ -12,13 +12,9 @@ public class Person implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Expose
     private String name; //Поле не может быть null, Строка не может быть пустой
-    @Expose
     private Long height; //Поле не может быть null, Значение поля должно быть больше 0
-    @Expose
     private Color eyeColor; //Поле может быть null
-    @Expose
     private Country nationality; //Поле может быть null
 
     public Person(String name, Long height, Color eyeColor, Country nationality) {

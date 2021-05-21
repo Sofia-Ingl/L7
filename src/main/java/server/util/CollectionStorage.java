@@ -2,7 +2,6 @@ package server.util;
 
 import server.Server;
 import shared.data.Movie;
-import shared.exceptions.MalformedCollectionContentException;
 import shared.serializable.Pair;
 import shared.serializable.User;
 

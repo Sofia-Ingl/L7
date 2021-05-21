@@ -11,9 +11,7 @@ public class Coordinates implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Expose
     private float x; //Максимальное значение поля: 326
-    @Expose
     private Integer y; //Максимальное значение поля: 281, Поле не может быть null
 
     public Coordinates(float x, Integer y) {
