@@ -10,6 +10,7 @@ import server.commands.inner.SendCommands;
 import server.commands.user.*;
 import server.util.*;
 import shared.serializable.Pair;
+
 import java.io.IOException;
 import java.net.*;
 import java.nio.channels.IllegalBlockingModeException;
@@ -119,21 +120,22 @@ public class Server implements Runnable {
     private static Pair<String[], Integer> processArguments(String[] args) {
         try {
 
-            if (args.length == 5) {
+            if (args.length == 6) {
                 String databaseHost = args[0];
                 String databaseName = args[1];
-                String databaseUsername = args[2];
-                String userPass = args[3];
-                String databaseAddress = "jdbc:postgresql://" + databaseHost + ":5432/" + databaseName;
-                int port = Integer.parseInt(args[4]);
+                int dataBasePort = Integer.parseInt(args[2]);
+                String databaseUsername = args[3];
+                String userPass = args[4];
+                String databaseAddress = "jdbc:postgresql://" + databaseHost + ":" + dataBasePort + "/" + databaseName;
+                int port = Integer.parseInt(args[5]);
 
-                if (port <= 1024) {
+                if (dataBasePort <= 1024 || port <= 1024) {
                     throw new IllegalArgumentException("Указан недопустимый порт");
                 }
-                return new Pair<>(new String[] {databaseAddress, databaseUsername, userPass}, port);
+                return new Pair<>(new String[]{databaseAddress, databaseUsername, userPass}, port);
 
             } else {
-                throw new IllegalArgumentException("При запуске jar некорректно указаны аргументы (правильный вариант: java -jar <имя jar> <хост бд> <имя бд> <имя пользователя> <пароль> <порт сервера>");
+                throw new IllegalArgumentException("При запуске jar некорректно указаны аргументы (правильный вариант: java -jar <имя jar> <хост бд> <имя бд> <порт бд> <имя пользователя> <пароль> <порт сервера>");
             }
         } catch (NumberFormatException e) {
             logger.error("Порт должен быть целым числом");
@@ -145,7 +147,7 @@ public class Server implements Runnable {
             logger.error("Непредвиденная ошибка при расшифровке аргументов командной строки");
             emergencyExit();
         }
-        return new Pair<>(new String[] {"", "", ""}, 8234);
+        return new Pair<>(new String[]{"", "", ""}, 8234);
     }
 
     private static void emergencyExit() {
