@@ -42,9 +42,10 @@ public class Server implements Runnable {
                 new RemoveById(), new RemoveGreater(), new Update(), new Exit()};
 
         Server server = new Server(databaseAddrUserAndPort.getSecond(), new CommandWrapper(collectionStorage, databaseCollectionHandler, userHandler, userCommands, innerServerCommands));
-        //addShutdownHook(server);
+        addShutdownHook(databaseManager);
 
         server.run();
+        databaseManager.closeConnectionWithDatabase();
     }
 
 
@@ -156,15 +157,15 @@ public class Server implements Runnable {
     }
 
 
-    /*
-    private static void addShutdownHook(Server server) {
+
+    private static void addShutdownHook(DatabaseManager databaseManager) {
         Runtime.getRuntime().addShutdownHook(
                 new Thread(() -> {
                     logger.info("Выполняются действия после сигнала о прекращении работы сервера");
+                    databaseManager.closeConnectionWithDatabase();
                 }
                 ));
     }
-     */
 
     public CommandWrapper getCommandWrapper() {
         return commandWrapper;
